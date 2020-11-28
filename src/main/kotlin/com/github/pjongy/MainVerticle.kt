@@ -6,6 +6,7 @@ import com.github.pjongy.di.VertxModule
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.Promise
 import io.vertx.core.http.HttpServer
+import io.vertx.ext.web.Router
 import org.slf4j.LoggerFactory
 
 
@@ -16,11 +17,16 @@ class MainVerticle : AbstractVerticle() {
     val joupon = DaggerComponent.builder()
       .clockModule(ClockModule())
       .vertxModule(VertxModule(vertx = vertx)).build()
-    val vertx = joupon.vertx()
     logger.info("joupon service started")
-    val server: HttpServer = vertx.createHttpServer()
+    val vertx = joupon.vertx()
+    val couponService = joupon.couponService()
 
-    // TODO(pjongy): Add request handler to server
-    server.listen(8080);
+    val rootRouter = Router.router(vertx)
+    rootRouter.mountSubRouter("/coupons", couponService.gerRouter())
+
+    val server: HttpServer = joupon.vertx().createHttpServer()
+    server
+      .requestHandler(rootRouter)
+      .listen(8080)
   }
 }
