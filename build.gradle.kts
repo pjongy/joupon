@@ -49,6 +49,12 @@ application {
 
 val mainVerticleName = "com.github.pjongy.MainVerticle"
 
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
+  kotlinOptions {
+    jvmTarget = "12"
+  }
+}
+
 tasks {
   getByName<JavaExec>("run") {
     dependsOn("compileKotlin")
