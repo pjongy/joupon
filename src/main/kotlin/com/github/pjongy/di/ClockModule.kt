@@ -5,7 +5,6 @@ import dagger.Provides
 import java.time.Clock
 import javax.inject.Singleton
 
-
 @Module
 open class ClockModule {
   @Provides

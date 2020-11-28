@@ -17,6 +17,8 @@ val vertxVersion = "3.9.4"
 val log4jVersion = "2.14.0"
 val slf4jVersion = "1.7.30"
 val guavaVersion = "30.0-jre"
+val ktlintVersion = "0.39.0"
+val ktlint by configurations.creating
 
 dependencies {
   implementation(kotlin("stdlib"))
@@ -41,6 +43,9 @@ dependencies {
   implementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
   implementation("org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion")
   implementation("org.slf4j:slf4j-api:$slf4jVersion")
+
+  // Link - ktlint
+  ktlint("com.pinterest:ktlint:$ktlintVersion")
 }
 
 application {
@@ -61,9 +66,21 @@ tasks {
     args = listOf(
       "run",
       mainVerticleName,
-      "--redeploy=src/**/*",
-      "--launcher-class=${application.mainClassName}",
-      "--on-redeploy=../gradlew classes"
+      "--launcher-class=${application.mainClassName}"
     )
+  }
+
+  register<JavaExec>("ktlintCheck") {
+    description = "Check Kotlin code style."
+    main = "com.pinterest.ktlint.Main"
+    classpath = ktlint
+    args = listOf("src/**/*.kt")
+  }
+
+  register<JavaExec>("ktlintFormat") {
+    description = "Fix Kotlin code style deviations."
+    main = "com.pinterest.ktlint.Main"
+    classpath = ktlint
+    args = listOf("-F", "src/**/*.kt")
   }
 }

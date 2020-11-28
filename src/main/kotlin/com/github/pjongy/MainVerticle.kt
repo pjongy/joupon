@@ -9,7 +9,6 @@ import io.vertx.core.http.HttpServer
 import io.vertx.ext.web.Router
 import org.slf4j.LoggerFactory
 
-
 class MainVerticle : AbstractVerticle() {
   private val logger = LoggerFactory.getLogger(javaClass)
 

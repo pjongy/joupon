@@ -6,7 +6,6 @@ import io.vertx.core.Vertx
 import java.time.Clock
 import javax.inject.Singleton
 
-
 @Singleton
 @Component(
   modules = [
