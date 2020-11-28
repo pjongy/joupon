@@ -11,9 +11,11 @@ repositories {
   mavenCentral()
 }
 
+val konfVersion = "0.23.0"
 val vertxVersion = "3.9.4"
 val log4jVersion = "2.14.0"
 val slf4jVersion = "1.7.30"
+val guavaVersion = "30.0-jre"
 
 dependencies {
   implementation(kotlin("stdlib"))
@@ -22,6 +24,12 @@ dependencies {
   implementation("io.vertx:vertx-web:$vertxVersion")
   implementation("io.vertx:vertx-lang-kotlin:$vertxVersion")
   implementation("io.vertx:vertx-lang-kotlin-coroutines:$vertxVersion")
+
+  // Common util - guava
+  implementation("com.google.guava:guava:$guavaVersion")
+
+  // Config variable - konf
+  implementation("com.uchuhimo:konf:$konfVersion")
 
   // Logging
   implementation("org.apache.logging.log4j:log4j-api:$log4jVersion")
