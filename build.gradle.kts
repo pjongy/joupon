@@ -11,6 +11,7 @@ repositories {
   mavenCentral()
 }
 
+val daggerVersion = "2.30.1"
 val konfVersion = "0.23.0"
 val vertxVersion = "3.9.4"
 val log4jVersion = "2.14.0"
@@ -27,6 +28,10 @@ dependencies {
 
   // Common util - guava
   implementation("com.google.guava:guava:$guavaVersion")
+
+  // DI - Dagger
+  implementation("com.google.dagger:dagger:$daggerVersion")
+  kapt("com.google.dagger:dagger-compiler:$daggerVersion")
 
   // Config variable - konf
   implementation("com.uchuhimo:konf:$konfVersion")
@@ -46,6 +51,7 @@ val mainVerticleName = "com.github.pjongy.MainVerticle"
 
 tasks {
   getByName<JavaExec>("run") {
+    dependsOn("compileKotlin")
     args = listOf(
       "run",
       mainVerticleName,
