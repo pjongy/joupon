@@ -4,7 +4,6 @@ import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.VarCharColumnType
 
-
 fun Table.varcharUTF8(
   name: String,
   length: Int = 255,
