@@ -9,6 +9,7 @@ version = "0.0.1"
 
 repositories {
   mavenCentral()
+  jcenter()
 }
 
 val daggerVersion = "2.30.1"
@@ -19,6 +20,7 @@ val slf4jVersion = "1.7.30"
 val guavaVersion = "30.0-jre"
 val ktlintVersion = "0.39.0"
 val gsonVersion = "2.8.6"
+val exposedVersion = "0.28.1"
 val ktlint by configurations.creating
 
 dependencies {
@@ -41,6 +43,12 @@ dependencies {
 
   // Config variable - konf
   implementation("com.uchuhimo:konf:$konfVersion")
+
+  // ORM - exposed
+  implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+  implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
+  implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+  implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
 
   // Logging
   implementation("org.apache.logging.log4j:log4j-api:$log4jVersion")
