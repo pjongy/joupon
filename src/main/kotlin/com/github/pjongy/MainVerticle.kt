@@ -13,10 +13,12 @@ class MainVerticle : AbstractVerticle() {
   private val logger = LoggerFactory.getLogger(javaClass)
 
   override fun start(startPromise: Promise<Void>) {
+    val port = jouponConfig[Joupon.port]
+    val host = jouponConfig[Joupon.host]
     val joupon = DaggerComponent.builder()
       .clockModule(ClockModule())
       .vertxModule(VertxModule(vertx = vertx)).build()
-    logger.info("joupon service started")
+    logger.info("joupon service started $host:$port")
     val vertx = joupon.vertx()
     val couponService = joupon.couponService()
 
@@ -26,6 +28,6 @@ class MainVerticle : AbstractVerticle() {
     val server: HttpServer = joupon.vertx().createHttpServer()
     server
       .requestHandler(rootRouter)
-      .listen(8080)
+      .listen(port, host)
   }
 }
