@@ -21,6 +21,8 @@ val guavaVersion = "30.0-jre"
 val ktlintVersion = "0.39.0"
 val gsonVersion = "2.8.6"
 val exposedVersion = "0.28.1"
+val hikariVersion = "3.4.5"
+val mysqlConnectorVersion = "8.0.22"
 val ktlint by configurations.creating
 
 dependencies {
@@ -49,6 +51,12 @@ dependencies {
   implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
   implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
   implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
+
+  // DBCP - hikariCP
+  implementation("com.zaxxer:HikariCP:$hikariVersion")
+
+  // MySQLJDBC
+  implementation("mysql:mysql-connector-java:$mysqlConnectorVersion")
 
   // Logging
   implementation("org.apache.logging.log4j:log4j-api:$log4jVersion")
