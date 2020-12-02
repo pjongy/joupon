@@ -18,6 +18,7 @@ val log4jVersion = "2.14.0"
 val slf4jVersion = "1.7.30"
 val guavaVersion = "30.0-jre"
 val ktlintVersion = "0.39.0"
+val gsonVersion = "2.8.6"
 val ktlint by configurations.creating
 
 dependencies {
@@ -34,6 +35,9 @@ dependencies {
   // DI - Dagger
   implementation("com.google.dagger:dagger:$daggerVersion")
   kapt("com.google.dagger:dagger-compiler:$daggerVersion")
+
+  // Json - gson
+  implementation("com.google.code.gson:gson:$gsonVersion")
 
   // Config variable - konf
   implementation("com.uchuhimo:konf:$konfVersion")

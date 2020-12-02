@@ -10,7 +10,8 @@ import javax.inject.Singleton
 @Component(
   modules = [
     ClockModule::class,
-    VertxModule::class
+    VertxModule::class,
+    GsonModule::class,
   ]
 )
 interface Component {
