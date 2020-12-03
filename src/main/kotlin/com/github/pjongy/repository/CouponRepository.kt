@@ -12,6 +12,20 @@ class CouponRepository @Inject constructor(
   private val clock: Clock,
 ) {
 
+  suspend fun fetchCoupons(
+    start: Long,
+    size: Int,
+  ): Pair<Long, List<CouponEntity>> {
+    return newSuspendedTransaction(db = db) {
+      val couponTotal = CouponEntity.count()
+      val coupons = CouponEntity
+        .all()
+        .limit(n = size, offset = start)
+        .toList()
+      Pair(couponTotal, coupons)
+    }
+  }
+
   suspend fun createCoupon(
     name: String,
     category: String,
