@@ -44,7 +44,7 @@ class WalletService @Inject constructor(
       val request = try {
         // NOTE(pjongy): Only allows last parameter for same key
         GetAvailableCouponsRequest(
-          ownerId = routingContext.pathParam("owner_id").first().toString(),
+          ownerId = routingContext.pathParam("owner_id").toString(),
           page = routingContext.queryParam("page").last().toInt(),
           pageSize = routingContext.queryParam("page_size").last().toInt(),
         )
