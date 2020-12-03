@@ -11,6 +11,7 @@ fun Route.coroutineHandler(fn: suspend (RoutingContext) -> Unit): Route {
     CoroutineScope(ctx.vertx().dispatcher()).run {
       launch {
         try {
+          ctx.response().putHeader("Content-Type", "application/json")
           fn(ctx)
         } catch (e: Exception) {
           println(e)
