@@ -4,7 +4,7 @@ import com.github.pjongy.exception.InvalidParameter
 import com.github.pjongy.exception.PermissionRequired
 import com.github.pjongy.extension.coroutineHandler
 import com.github.pjongy.handler.wallet.GetAvailableCouponsHandler
-import com.github.pjongy.handler.wallet.GetAvailableCouponsRequest
+import com.github.pjongy.handler.wallet.protocol.GetAvailableCouponsRequest
 import io.vertx.core.Vertx
 import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.Router

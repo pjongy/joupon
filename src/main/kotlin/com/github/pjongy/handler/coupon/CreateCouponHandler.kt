@@ -1,29 +1,13 @@
 package com.github.pjongy.handler.coupon
 
+import com.github.pjongy.handler.coupon.protocol.CreateCouponRequest
+import com.github.pjongy.handler.coupon.protocol.CreateCouponResponse
 import com.github.pjongy.repository.CouponRepository
 import com.google.gson.Gson
 import java.time.Clock
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
-
-data class CreateCouponRequest(
-  val name: String,
-  val category: String,
-  val totalAmount: Int,
-  val discountRate: Float?,
-  val discountAmount: Int?,
-)
-
-data class CreateCouponResponse(
-  val id: String,
-  val name: String,
-  val category: String,
-  val totalAmount: Int,
-  val discountRate: Float?,
-  val discountAmount: Int?,
-  val createdAt: String,
-)
 
 class CreateCouponHandler @Inject constructor(
   private val clock: Clock,

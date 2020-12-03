@@ -1,11 +1,7 @@
 package com.github.pjongy.handler.coupon
 
+import com.github.pjongy.handler.coupon.protocol.GetCouponsRequest
 import javax.inject.Inject
-
-data class GetCouponsRequest(
-  val page: Int,
-  val pageSize: Int
-)
 
 class GetCouponsHandler @Inject constructor() {
 

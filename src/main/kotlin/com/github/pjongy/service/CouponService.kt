@@ -4,9 +4,9 @@ import com.github.pjongy.exception.InvalidParameter
 import com.github.pjongy.exception.PermissionRequired
 import com.github.pjongy.extension.coroutineHandler
 import com.github.pjongy.handler.coupon.CreateCouponHandler
-import com.github.pjongy.handler.coupon.CreateCouponRequest
 import com.github.pjongy.handler.coupon.GetCouponsHandler
-import com.github.pjongy.handler.coupon.GetCouponsRequest
+import com.github.pjongy.handler.coupon.protocol.CreateCouponRequest
+import com.github.pjongy.handler.coupon.protocol.GetCouponsRequest
 import io.vertx.core.Vertx
 import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.Router

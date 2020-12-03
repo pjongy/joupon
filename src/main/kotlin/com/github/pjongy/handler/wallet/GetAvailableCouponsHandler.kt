@@ -1,31 +1,13 @@
 package com.github.pjongy.handler.wallet
 
 import com.github.pjongy.extension.toISO8601
+import com.github.pjongy.handler.common.protocol.Coupon
+import com.github.pjongy.handler.wallet.protocol.GetAvailableCouponsRequest
+import com.github.pjongy.handler.wallet.protocol.GetAvailableCouponsResponse
 import com.github.pjongy.repository.CouponWalletRepository
 import com.google.gson.Gson
 import java.time.Clock
 import javax.inject.Inject
-
-data class GetAvailableCouponsRequest(
-  val ownerId: String,
-  val page: Int,
-  val pageSize: Int,
-)
-
-data class Coupon(
-  val id: String,
-  val name: String,
-  val category: String,
-  val totalAmount: Int,
-  val discountAmount: Int?,
-  val discountRate: Float?,
-  val createdAt: String,
-)
-
-data class GetAvailableCouponsResponse(
-  val coupons: List<Coupon>,
-  val total: Long,
-)
 
 class GetAvailableCouponsHandler @Inject constructor(
   private val clock: Clock,
