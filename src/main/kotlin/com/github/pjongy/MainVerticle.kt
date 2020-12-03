@@ -31,9 +31,11 @@ class MainVerticle : AbstractVerticle() {
     logger.info("joupon service started $host:$port")
     val vertx = joupon.vertx()
     val couponService = joupon.couponService()
+    val walletService = joupon.walletService()
 
     val rootRouter = Router.router(vertx)
     rootRouter.mountSubRouter("/coupons", couponService.gerRouter())
+    rootRouter.mountSubRouter("/wallets", walletService.gerRouter())
 
     val server: HttpServer = joupon.vertx().createHttpServer()
     server

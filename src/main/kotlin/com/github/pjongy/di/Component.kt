@@ -1,6 +1,7 @@
 package com.github.pjongy.di
 
 import com.github.pjongy.service.CouponService
+import com.github.pjongy.service.WalletService
 import dagger.Component
 import io.vertx.core.Vertx
 import org.jetbrains.exposed.sql.Database
@@ -21,4 +22,5 @@ interface Component {
   fun database(): Database
   fun vertx(): Vertx
   fun couponService(): CouponService
+  fun walletService(): WalletService
 }
