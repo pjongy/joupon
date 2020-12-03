@@ -18,6 +18,6 @@ object CouponWallet : UUIDTable("coupon_wallet") {
 class CouponWalletEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
   companion object : UUIDEntityClass<CouponWalletEntity>(CouponWallet)
   var coupon by CouponEntity referencedOn CouponWallet.coupon
-  val ownerId by CouponWallet.ownerId
-  var createdAt by Coupon.createdAt
+  var ownerId by CouponWallet.ownerId
+  var createdAt by CouponWallet.createdAt
 }
