@@ -21,10 +21,10 @@ class IssueCouponHandler @Inject constructor(
 
   // NOTE(pjongy): It could blows timing issue because of check-and-insert is separated (It should be atomic)
   suspend fun handle(request: IssueCouponRequest): String {
-    val (couponTotal, _) = couponWalletRepository.findCouponsByUserId(
-      ownerId = request.ownerId, start = 0, size = 0
+    val isAlreadyIssued = couponWalletRepository.checkExistenceByOwnerIdAndCouponId(
+      ownerId = request.ownerId, couponId = UUID.fromString(request.couponId)
     )
-    if (couponTotal > 0) {
+    if (isAlreadyIssued) {
       throw Duplicated("already issued coupon")
     }
     val couponId = UUID.fromString(request.couponId)

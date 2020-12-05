@@ -12,6 +12,7 @@ import java.util.UUID
 import javax.inject.Inject
 import org.jetbrains.exposed.sql.Slf4jSqlDebugLogger
 import org.jetbrains.exposed.sql.addLogger
+import org.jetbrains.exposed.sql.and
 
 class CouponWalletRepository @Inject constructor(
   private val db: Database,
@@ -56,6 +57,18 @@ class CouponWalletRepository @Inject constructor(
           it.coupon
         }
       Pair(couponTotal, coupons)
+    }
+  }
+
+  suspend fun checkExistenceByOwnerIdAndCouponId(
+    ownerId: String,
+    couponId: UUID,
+  ): Boolean {
+    return newSuspendedTransaction(db = db) {
+      addLogger(Slf4jSqlDebugLogger)
+      CouponWalletEntity.find {
+        CouponWallet.coupon eq couponId and (CouponWallet.ownerId eq ownerId)
+      }.count() > 0
     }
   }
 }
