@@ -1,7 +1,6 @@
 package com.github.pjongy.service
 
 import com.github.pjongy.exception.InvalidParameter
-import com.github.pjongy.exception.PermissionRequired
 import com.github.pjongy.extension.coroutineHandler
 import com.github.pjongy.handler.wallet.GetAvailableCouponsHandler
 import com.github.pjongy.handler.wallet.IssueCouponHandler
@@ -27,50 +26,30 @@ class WalletService @Inject constructor(
     return router
   }
 
-  private suspend fun exceptionHandler(routingContext: RoutingContext, fn: suspend () -> Unit) {
-    try {
-      fn()
-    } catch (e: InvalidParameter) {
-      routingContext.fail(400, e)
-    } catch (e: PermissionRequired) {
-      routingContext.fail(403, e)
+  private suspend fun getAvailableCoupons(routingContext: RoutingContext): String {
+    val request = try {
+      // NOTE(pjongy): Only allows last parameter for same key
+      GetAvailableCouponsRequest(
+        ownerId = routingContext.pathParam("owner_id").toString(),
+        page = routingContext.queryParam("page").last().toInt(),
+        pageSize = routingContext.queryParam("page_size").last().toInt(),
+      )
+    } catch (e: Exception) {
+      throw InvalidParameter(e.message ?: "Parameters not satisfied")
     }
+    return getAvailableCouponsHandler.handle(request = request)
   }
 
-  private suspend fun getAvailableCoupons(routingContext: RoutingContext) {
-    exceptionHandler(routingContext = routingContext) {
-      val response = routingContext.response()
-      response.isChunked = true
-      val request = try {
-        // NOTE(pjongy): Only allows last parameter for same key
-        GetAvailableCouponsRequest(
-          ownerId = routingContext.pathParam("owner_id").toString(),
-          page = routingContext.queryParam("page").last().toInt(),
-          pageSize = routingContext.queryParam("page_size").last().toInt(),
-        )
-      } catch (e: Exception) {
-        throw InvalidParameter(e.message ?: "Parameters not satisfied")
-      }
-      val responseBody = getAvailableCouponsHandler.handle(request = request)
-      response.write(responseBody).end()
+  private suspend fun issueCoupon(routingContext: RoutingContext): String {
+    val request = try {
+      // NOTE(pjongy): Only allows last parameter for same key
+      IssueCouponRequest(
+        ownerId = routingContext.pathParam("owner_id").toString(),
+        couponId = routingContext.pathParam("coupon_id").toString(),
+      )
+    } catch (e: Exception) {
+      throw InvalidParameter(e.message ?: "Parameters not satisfied")
     }
-  }
-
-  private suspend fun issueCoupon(routingContext: RoutingContext) {
-    exceptionHandler(routingContext = routingContext) {
-      val response = routingContext.response()
-      response.isChunked = true
-      val request = try {
-        // NOTE(pjongy): Only allows last parameter for same key
-        IssueCouponRequest(
-          ownerId = routingContext.pathParam("owner_id").toString(),
-          couponId = routingContext.pathParam("coupon_id").toString(),
-        )
-      } catch (e: Exception) {
-        throw InvalidParameter(e.message ?: "Parameters not satisfied")
-      }
-      val responseBody = issueCouponHandler.handle(request = request)
-      response.write(responseBody).end()
-    }
+    return issueCouponHandler.handle(request = request)
   }
 }
