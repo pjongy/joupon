@@ -5,14 +5,14 @@ import com.github.pjongy.model.CouponWallet
 import com.github.pjongy.model.CouponWalletEntity
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.Slf4jSqlDebugLogger
+import org.jetbrains.exposed.sql.addLogger
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.time.Clock
 import java.time.Instant
 import java.util.UUID
 import javax.inject.Inject
-import org.jetbrains.exposed.sql.Slf4jSqlDebugLogger
-import org.jetbrains.exposed.sql.addLogger
-import org.jetbrains.exposed.sql.and
 
 class CouponWalletRepository @Inject constructor(
   private val db: Database,

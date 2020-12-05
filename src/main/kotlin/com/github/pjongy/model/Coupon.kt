@@ -9,6 +9,11 @@ import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.`java-time`.timestamp
 import java.util.UUID
 
+enum class CouponStatus {
+  NORMAL,
+  DELETED,
+}
+
 object Coupon : UUIDTable("coupon") {
   val totalAmount: Column<Int> = integer("total_amount")
   val discountRate: Column<Float?> = float("discount_rate").nullable()
@@ -16,14 +21,21 @@ object Coupon : UUIDTable("coupon") {
   val category: Column<String> = varcharUTF8("category", 32).index()
   val name: Column<String> = varcharUTF8("name", 32)
   val createdAt = timestamp("created_at")
+  val expiredAt = timestamp("expired_at")
+  val status = enumeration("status", CouponStatus::class)
+    .default(CouponStatus.NORMAL)
+    .index()
 }
 
 class CouponEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
   companion object : UUIDEntityClass<CouponEntity>(Coupon)
+
   var totalAmount by Coupon.totalAmount
   var discountRate by Coupon.discountRate
   var discountAmount by Coupon.discountAmount
   var category by Coupon.category
   var name by Coupon.name
   var createdAt by Coupon.createdAt
+  var expiredAt by Coupon.expiredAt
+  var status by Coupon.status
 }

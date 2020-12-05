@@ -22,6 +22,7 @@ class CreateCouponHandler @Inject constructor(
       totalAmount = request.totalAmount,
       discountAmount = request.discountAmount,
       discountRate = request.discountRate,
+      expiredAt = ZonedDateTime.parse(request.expiredAt),
     )
 
     val response = CreateCouponResponse(

@@ -6,6 +6,7 @@ data class CreateCouponRequest(
   val totalAmount: Int,
   val discountRate: Float?,
   val discountAmount: Int?,
+  val expiredAt: String,
 )
 
 data class CreateCouponResponse(

@@ -3,13 +3,14 @@ package com.github.pjongy.repository
 import com.github.pjongy.model.Coupon
 import com.github.pjongy.model.CouponEntity
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.Slf4jSqlDebugLogger
+import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.time.Clock
 import java.time.Instant
+import java.time.ZonedDateTime
 import java.util.UUID
 import javax.inject.Inject
-import org.jetbrains.exposed.sql.Slf4jSqlDebugLogger
-import org.jetbrains.exposed.sql.addLogger
 
 class CouponRepository @Inject constructor(
   private val db: Database,
@@ -44,6 +45,7 @@ class CouponRepository @Inject constructor(
     totalAmount: Int,
     discountRate: Float?,
     discountAmount: Int?,
+    expiredAt: ZonedDateTime,
   ): CouponEntity {
     if (discountAmount == null && discountRate == null) {
       throw IllegalArgumentException("either discountAmount or discountRate should be passed")
@@ -57,6 +59,7 @@ class CouponRepository @Inject constructor(
         this.discountRate = discountRate
         this.discountAmount = discountAmount
         this.createdAt = Instant.now(clock)
+        this.expiredAt = expiredAt.toInstant()
       }
     }
   }
