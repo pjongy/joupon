@@ -1,13 +1,15 @@
 package com.github.pjongy.repository
 
+import com.github.pjongy.model.Coupon
 import com.github.pjongy.model.CouponEntity
+import com.github.pjongy.model.CouponStatus
 import com.github.pjongy.model.CouponWallet
 import com.github.pjongy.model.CouponWalletEntity
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.Slf4jSqlDebugLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.time.Clock
 import java.time.Instant
@@ -44,18 +46,12 @@ class CouponWalletRepository @Inject constructor(
     start: Long,
     size: Int,
   ): Pair<Long, List<CouponEntity>> {
-    val condition = CouponWallet.ownerId eq ownerId
     return newSuspendedTransaction(db = db) {
       addLogger(Slf4jSqlDebugLogger)
-      val couponTotal = CouponWalletEntity
-        .find { condition }
-        .count()
-      val coupons = CouponWalletEntity
-        .find { condition }
-        .limit(n = size, offset = start)
-        .map {
-          it.coupon
-        }
+      val query = (Coupon innerJoin CouponWallet)
+        .select { Coupon.status eq CouponStatus.NORMAL and (CouponWallet.ownerId eq ownerId) }
+      val couponTotal = query.count()
+      val coupons = CouponEntity.wrapRows(query.limit(size, start)).toList()
       Pair(couponTotal, coupons)
     }
   }
