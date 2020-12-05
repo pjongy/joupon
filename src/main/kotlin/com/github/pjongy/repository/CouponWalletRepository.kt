@@ -49,7 +49,11 @@ class CouponWalletRepository @Inject constructor(
     return newSuspendedTransaction(db = db) {
       addLogger(Slf4jSqlDebugLogger)
       val query = (Coupon innerJoin CouponWallet)
-        .select { Coupon.status eq CouponStatus.NORMAL and (CouponWallet.ownerId eq ownerId) }
+        .select {
+          Coupon.status eq CouponStatus.NORMAL and
+            (CouponWallet.ownerId eq ownerId) and
+            (Coupon.expiredAt greaterEq Instant.now(clock))
+        }
       val couponTotal = query.count()
       val coupons = CouponEntity.wrapRows(query.limit(size, start)).toList()
       Pair(couponTotal, coupons)
