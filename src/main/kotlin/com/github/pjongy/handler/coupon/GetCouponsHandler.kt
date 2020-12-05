@@ -1,7 +1,7 @@
 package com.github.pjongy.handler.coupon
 
 import com.github.pjongy.extension.toISO8601
-import com.github.pjongy.handler.common.protocol.Coupon
+import com.github.pjongy.handler.coupon.protocol.Coupon
 import com.github.pjongy.handler.coupon.protocol.GetCouponsRequest
 import com.github.pjongy.handler.coupon.protocol.GetCouponsResponse
 import com.github.pjongy.repository.CouponRepository

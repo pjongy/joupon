@@ -2,8 +2,7 @@ package com.github.pjongy.handler.wallet
 
 import com.github.pjongy.exception.Duplicated
 import com.github.pjongy.exception.OutOfAvailableData
-import com.github.pjongy.extension.toISO8601
-import com.github.pjongy.handler.common.protocol.Coupon
+import com.github.pjongy.handler.wallet.protocol.Coupon
 import com.github.pjongy.handler.wallet.protocol.IssueCouponRequest
 import com.github.pjongy.handler.wallet.protocol.IssueCouponResponse
 import com.github.pjongy.repository.CouponRepository
@@ -43,10 +42,8 @@ class IssueCouponHandler @Inject constructor(
         id = coupon.id.toString(),
         name = coupon.name,
         category = coupon.category,
-        totalAmount = coupon.totalAmount,
         discountAmount = coupon.discountAmount,
         discountRate = coupon.discountRate,
-        createdAt = coupon.createdAt.toISO8601(clock.zone)
       )
     )
     return gson.toJson(response)
