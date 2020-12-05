@@ -8,6 +8,8 @@ import java.time.Clock
 import java.time.Instant
 import java.util.UUID
 import javax.inject.Inject
+import org.jetbrains.exposed.sql.Slf4jSqlDebugLogger
+import org.jetbrains.exposed.sql.addLogger
 
 class CouponRepository @Inject constructor(
   private val db: Database,
@@ -16,6 +18,7 @@ class CouponRepository @Inject constructor(
 
   suspend fun findById(id: UUID): CouponEntity {
     return newSuspendedTransaction(db = db) {
+      addLogger(Slf4jSqlDebugLogger)
       CouponEntity.find { Coupon.id eq id }.first()
     }
   }
@@ -25,6 +28,7 @@ class CouponRepository @Inject constructor(
     size: Int,
   ): Pair<Long, List<CouponEntity>> {
     return newSuspendedTransaction(db = db) {
+      addLogger(Slf4jSqlDebugLogger)
       val couponTotal = CouponEntity.count()
       val coupons = CouponEntity
         .all()
@@ -45,6 +49,7 @@ class CouponRepository @Inject constructor(
       throw IllegalArgumentException("either discountAmount or discountRate should be passed")
     }
     return newSuspendedTransaction(db = db) {
+      addLogger(Slf4jSqlDebugLogger)
       CouponEntity.new {
         this.name = name
         this.category = category

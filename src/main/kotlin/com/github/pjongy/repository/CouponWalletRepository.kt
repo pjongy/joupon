@@ -10,6 +10,8 @@ import java.time.Clock
 import java.time.Instant
 import java.util.UUID
 import javax.inject.Inject
+import org.jetbrains.exposed.sql.Slf4jSqlDebugLogger
+import org.jetbrains.exposed.sql.addLogger
 
 class CouponWalletRepository @Inject constructor(
   private val db: Database,
@@ -18,6 +20,7 @@ class CouponWalletRepository @Inject constructor(
 
   suspend fun countByCouponId(id: UUID): Long {
     return newSuspendedTransaction(db = db) {
+      addLogger(Slf4jSqlDebugLogger)
       CouponWalletEntity
         .find { CouponWallet.coupon eq id }
         .count()
@@ -26,6 +29,7 @@ class CouponWalletRepository @Inject constructor(
 
   suspend fun create(coupon: CouponEntity, ownerId: String): CouponWalletEntity {
     return newSuspendedTransaction(db = db) {
+      addLogger(Slf4jSqlDebugLogger)
       CouponWalletEntity.new {
         this.coupon = coupon
         this.ownerId = ownerId
@@ -41,6 +45,7 @@ class CouponWalletRepository @Inject constructor(
   ): Pair<Long, List<CouponEntity>> {
     val condition = CouponWallet.ownerId eq ownerId
     return newSuspendedTransaction(db = db) {
+      addLogger(Slf4jSqlDebugLogger)
       val couponTotal = CouponWalletEntity
         .find { condition }
         .count()
