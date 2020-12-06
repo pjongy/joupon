@@ -9,10 +9,19 @@ import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.`java-time`.timestamp
 import java.util.UUID
 
+enum class CouponWalletStatus {
+  UNUSED,
+  USING,
+  USED,
+}
+
 object CouponWallet : UUIDTable("coupon_wallet") {
   val coupon = reference("coupon", Coupon)
   val ownerId: Column<String> = varcharUTF8("owner_id")
   val createdAt = timestamp("created_at")
+  val status = enumeration("status", CouponWalletStatus::class)
+    .default(CouponWalletStatus.UNUSED)
+    .index()
 }
 
 class CouponWalletEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
@@ -20,4 +29,5 @@ class CouponWalletEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
   var coupon by CouponEntity referencedOn CouponWallet.coupon
   var ownerId by CouponWallet.ownerId
   var createdAt by CouponWallet.createdAt
+  var status by CouponWallet.status
 }
