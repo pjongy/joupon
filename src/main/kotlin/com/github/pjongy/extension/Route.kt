@@ -10,8 +10,10 @@ import io.vertx.kotlin.coroutines.dispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-suspend fun exceptionHandler(routingContext: RoutingContext, fn: suspend () -> String) {
+suspend fun responseHandler(routingContext: RoutingContext, fn: suspend () -> String) {
   val response = routingContext.response()
+  response.isChunked = true
+  response.putHeader("Content-Type", "application/json")
   val responseBody = try {
     response.statusCode = 200
     fn()
@@ -28,7 +30,6 @@ suspend fun exceptionHandler(routingContext: RoutingContext, fn: suspend () -> S
     response.statusCode = 401
     e.message
   }
-
   response.write(responseBody)
   response.end()
 }
@@ -38,12 +39,7 @@ fun Route.coroutineHandler(fn: suspend (RoutingContext) -> String): Route {
     CoroutineScope(ctx.vertx().dispatcher()).run {
       launch {
         try {
-          val response = ctx.response()
-          response.isChunked = true
-          response.putHeader("Content-Type", "application/json")
-          exceptionHandler(routingContext = ctx) {
-            fn(ctx)
-          }
+          responseHandler(routingContext = ctx) { fn(ctx) }
         } catch (e: Exception) {
           ctx.fail(e)
         }
