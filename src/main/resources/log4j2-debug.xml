@@ -2,7 +2,9 @@
 <Configuration>
   <Appenders>
     <Console name="JSON_OUTPUT" target="SYSTEM_OUT">
-      <JsonLayout compact="true" complete="true" eventEol="true" objectMessageAsJsonObject="true"/>
+      <JsonLayout compact="true" complete="false" eventEol="true" objectMessageAsJsonObject="true">
+        <KeyValuePair key="request_id" value="${ctx:request_id}"/>
+      </JsonLayout>
     </Console>
   </Appenders>
   <Loggers>
