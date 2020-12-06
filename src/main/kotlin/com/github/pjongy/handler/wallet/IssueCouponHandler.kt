@@ -1,7 +1,7 @@
 package com.github.pjongy.handler.wallet
 
 import com.github.pjongy.exception.Duplicated
-import com.github.pjongy.exception.OutOfAvailableData
+import com.github.pjongy.exception.UnAvailableData
 import com.github.pjongy.handler.wallet.protocol.Coupon
 import com.github.pjongy.handler.wallet.protocol.IssueCouponRequest
 import com.github.pjongy.handler.wallet.protocol.IssueCouponResponse
@@ -32,7 +32,7 @@ class IssueCouponHandler @Inject constructor(
     val currentCouponTotal = couponWalletRepository.countByCouponId(id = couponId)
 
     if (coupon.totalAmount < currentCouponTotal) {
-      throw OutOfAvailableData("available count: ${coupon.totalAmount}")
+      throw UnAvailableData("available count: ${coupon.totalAmount}")
     }
 
     val couponWallet = couponWalletRepository.create(coupon = coupon, ownerId = request.ownerId)

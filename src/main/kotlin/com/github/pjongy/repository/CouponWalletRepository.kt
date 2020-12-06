@@ -5,6 +5,7 @@ import com.github.pjongy.model.CouponEntity
 import com.github.pjongy.model.CouponStatus
 import com.github.pjongy.model.CouponWallet
 import com.github.pjongy.model.CouponWalletEntity
+import com.github.pjongy.model.CouponWalletStatus
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.Slf4jSqlDebugLogger
 import org.jetbrains.exposed.sql.addLogger
@@ -69,6 +70,32 @@ class CouponWalletRepository @Inject constructor(
       CouponWalletEntity.find {
         CouponWallet.coupon eq couponId and (CouponWallet.ownerId eq ownerId)
       }.count() > 0
+    }
+  }
+
+  suspend fun findByOwnerIdAndCouponId(
+    ownerId: String,
+    couponId: UUID,
+  ): CouponWalletEntity? {
+    return newSuspendedTransaction(db = db) {
+      addLogger(Slf4jSqlDebugLogger)
+      try {
+        CouponWalletEntity.find {
+          CouponWallet.coupon eq couponId and (CouponWallet.ownerId eq ownerId)
+        }.first()
+      } catch (e: NoSuchElementException) {
+        null
+      }
+    }
+  }
+
+  suspend fun updateCouponWalletStatus(
+    couponWalletEntity: CouponWalletEntity,
+    couponWalletStatus: CouponWalletStatus
+  ) {
+    return newSuspendedTransaction(db = db) {
+      addLogger(Slf4jSqlDebugLogger)
+      couponWalletEntity.status = couponWalletStatus
     }
   }
 }

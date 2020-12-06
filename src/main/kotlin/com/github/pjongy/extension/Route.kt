@@ -3,6 +3,8 @@ package com.github.pjongy.extension
 import com.github.pjongy.exception.AuthorizationRequired
 import com.github.pjongy.exception.Duplicated
 import com.github.pjongy.exception.InvalidParameter
+import com.github.pjongy.exception.NotFound
+import com.github.pjongy.exception.UnAvailableData
 import com.github.pjongy.exception.PermissionRequired
 import io.vertx.core.logging.Logger
 import io.vertx.core.logging.LoggerFactory
@@ -32,6 +34,12 @@ suspend fun responseHandler(routingContext: RoutingContext, fn: suspend () -> St
     e.message
   } catch (e: AuthorizationRequired) {
     response.statusCode = 401
+    e.message
+  } catch (e: NotFound) {
+    response.statusCode = 404
+    e.message
+  } catch (e: UnAvailableData) {
+    response.statusCode = 404
     e.message
   }
   response.write(responseBody)
