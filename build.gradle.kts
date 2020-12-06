@@ -23,10 +23,15 @@ val gsonVersion = "2.8.6"
 val exposedVersion = "0.28.1"
 val hikariVersion = "3.4.5"
 val mysqlConnectorVersion = "8.0.22"
+val kotlinxVersion = "1.4.2"
 val ktlint by configurations.creating
 
 dependencies {
   implementation(kotlin("stdlib"))
+
+  // Kotlin coroutine
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxVersion")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:$kotlinxVersion")
 
   // vertx web
   implementation("io.vertx:vertx-web:$vertxVersion")

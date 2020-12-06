@@ -1,4 +1,4 @@
-package com.github.pjongy.util
+package com.github.pjongy.service.handler
 
 import com.github.pjongy.exception.AuthorizationRequired
 import com.github.pjongy.exception.PermissionRequired
