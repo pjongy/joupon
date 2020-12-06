@@ -31,7 +31,7 @@ class IssueCouponHandler @Inject constructor(
     val coupon = couponRepository.findById(couponId)
     val currentCouponTotal = couponWalletRepository.countByCouponId(id = couponId)
 
-    if (coupon.totalAmount < currentCouponTotal) {
+    if (coupon.totalAmount <= currentCouponTotal) {
       throw UnAvailableData("available count: ${coupon.totalAmount}")
     }
 
