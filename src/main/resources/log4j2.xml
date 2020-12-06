@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Configuration>
-    <Appenders>
-        <Console name="CONSOLE" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} %p %c{1} %m %mdc%n"/>
-        </Console>
-    </Appenders>
-    <Loggers>
-        <Root level="info">
-            <AppenderRef ref="CONSOLE"/>
-        </Root>
-    </Loggers>
+  <Appenders>
+    <Console name="JSON_OUTPUT" target="SYSTEM_OUT">
+      <JsonLayout compact="true" complete="false" eventEol="true" objectMessageAsJsonObject="true"/>
+    </Console>
+  </Appenders>
+  <Loggers>
+    <Root level="info">
+      <AppenderRef ref="JSON_OUTPUT"/>
+    </Root>
+  </Loggers>
 </Configuration>
