@@ -4,8 +4,8 @@ import com.github.pjongy.exception.AuthorizationRequired
 import com.github.pjongy.exception.Duplicated
 import com.github.pjongy.exception.InvalidParameter
 import com.github.pjongy.exception.NotFound
-import com.github.pjongy.exception.UnAvailableData
 import com.github.pjongy.exception.PermissionRequired
+import com.github.pjongy.exception.UnAvailableData
 import io.vertx.core.logging.Logger
 import io.vertx.core.logging.LoggerFactory
 import io.vertx.ext.web.Route

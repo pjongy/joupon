@@ -2,9 +2,14 @@ package com.github.pjongy.repository
 
 import com.github.pjongy.model.Coupon
 import com.github.pjongy.model.CouponEntity
+import com.github.pjongy.model.CouponWallet
+import com.github.pjongy.model.CouponWithIssuedCount
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.Slf4jSqlDebugLogger
 import org.jetbrains.exposed.sql.addLogger
+import org.jetbrains.exposed.sql.alias
+import org.jetbrains.exposed.sql.count
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.time.Clock
 import java.time.Instant
@@ -60,6 +65,35 @@ class CouponRepository @Inject constructor(
         this.discountAmount = discountAmount
         this.createdAt = Instant.now(clock)
         this.expiredAt = expiredAt.toInstant()
+      }
+    }
+  }
+
+  suspend fun getCouponsWithIssuedCount(
+    couponIds: List<UUID>
+  ): List<CouponWithIssuedCount> {
+    val issuedCount = CouponWallet.id.count().alias("coupon_wallet__total__grouped_by__coupon")
+    return newSuspendedTransaction(db = db) {
+      addLogger(Slf4jSqlDebugLogger)
+      val query = Coupon.leftJoin(CouponWallet)
+        .slice(
+          Coupon.id,
+          Coupon.name,
+          Coupon.category,
+          Coupon.totalAmount,
+          Coupon.discountAmount,
+          Coupon.discountRate,
+          Coupon.createdAt,
+          Coupon.expiredAt,
+          issuedCount,
+        ).select {
+          Coupon.id inList couponIds
+        }.groupBy(Coupon.id)
+      query.map {
+        CouponWithIssuedCount(
+          issuedTotal = it[issuedCount],
+          coupon = CouponEntity.wrapRow(it),
+        )
       }
     }
   }

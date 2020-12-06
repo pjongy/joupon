@@ -39,3 +39,8 @@ class CouponEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
   var expiredAt by Coupon.expiredAt
   var status by Coupon.status
 }
+
+data class CouponWithIssuedCount(
+  val issuedTotal: Long,
+  val coupon: CouponEntity,
+)

@@ -4,8 +4,10 @@ import com.github.pjongy.exception.InvalidParameter
 import com.github.pjongy.extension.coroutineHandler
 import com.github.pjongy.handler.coupon.CreateCouponHandler
 import com.github.pjongy.handler.coupon.GetCouponsHandler
+import com.github.pjongy.handler.coupon.GetCouponsWithIssuedCountHandler
 import com.github.pjongy.handler.coupon.protocol.CreateCouponRequest
 import com.github.pjongy.handler.coupon.protocol.GetCouponsRequest
+import com.github.pjongy.handler.coupon.protocol.GetCouponsWithIssuedCountRequest
 import com.github.pjongy.util.InternalAuthHandler
 import io.vertx.core.Vertx
 import io.vertx.core.http.HttpMethod
@@ -19,6 +21,7 @@ class CouponService @Inject constructor(
   private val internalAuthHandler: InternalAuthHandler,
   private val getCouponsHandler: GetCouponsHandler,
   private val createCouponHandler: CreateCouponHandler,
+  private val getCouponsWithIssuedCountHandler: GetCouponsWithIssuedCountHandler,
 ) : IService {
   override fun gerRouter(): Router {
     val router: Router = Router.router(vertx)
@@ -30,6 +33,10 @@ class CouponService @Inject constructor(
     router.route("/").method(HttpMethod.GET).coroutineHandler {
       internalAuthHandler.handle(it)
       getCoupons(it)
+    }
+    router.route("/fetch-with-issued").method(HttpMethod.GET).coroutineHandler {
+      internalAuthHandler.handle(it)
+      getCouponWithIssuedTotal(it)
     }
     return router
   }
@@ -62,5 +69,17 @@ class CouponService @Inject constructor(
       throw InvalidParameter(e.message ?: "Parameters not satisfied")
     }
     return getCouponsHandler.handle(request = request)
+  }
+
+  private suspend fun getCouponWithIssuedTotal(routingContext: RoutingContext): String {
+    val request = try {
+      // NOTE(pjongy): Only allows last parameter for same key
+      GetCouponsWithIssuedCountRequest(
+        couponIds = routingContext.queryParam("coupon_ids"),
+      )
+    } catch (e: Exception) {
+      throw InvalidParameter(e.message ?: "Parameters not satisfied")
+    }
+    return getCouponsWithIssuedCountHandler.handle(request = request)
   }
 }
