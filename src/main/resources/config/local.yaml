@@ -7,3 +7,5 @@ joupon:
     user: "root"
     password: ""
     maxPoolSize: 5
+
+  internalApiKeys: "internal_api_key1,internal_api_key2"

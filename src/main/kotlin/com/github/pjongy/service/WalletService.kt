@@ -6,6 +6,7 @@ import com.github.pjongy.handler.wallet.GetAvailableCouponsHandler
 import com.github.pjongy.handler.wallet.IssueCouponHandler
 import com.github.pjongy.handler.wallet.protocol.GetAvailableCouponsRequest
 import com.github.pjongy.handler.wallet.protocol.IssueCouponRequest
+import com.github.pjongy.util.InternalAuthHandler
 import io.vertx.core.Vertx
 import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.Router
@@ -15,6 +16,7 @@ import javax.inject.Inject
 
 class WalletService @Inject constructor(
   private val vertx: Vertx,
+  private val internalAuthHandler: InternalAuthHandler,
   private val getAvailableCouponsHandler: GetAvailableCouponsHandler,
   private val issueCouponHandler: IssueCouponHandler,
 ) : IService {

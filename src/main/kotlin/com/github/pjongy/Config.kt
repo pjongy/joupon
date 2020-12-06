@@ -14,6 +14,8 @@ object Joupon : ConfigSpec("joupon") {
     val user by required<String>()
     val password by required<String>()
   }
+
+  val internalApiKeys by required<String>() // NOTE(pjongy): Comma separated string
 }
 
 val jouponConfig = setConfigSource(Config { addSpec(Joupon) })

@@ -6,6 +6,7 @@ import com.github.pjongy.handler.coupon.CreateCouponHandler
 import com.github.pjongy.handler.coupon.GetCouponsHandler
 import com.github.pjongy.handler.coupon.protocol.CreateCouponRequest
 import com.github.pjongy.handler.coupon.protocol.GetCouponsRequest
+import com.github.pjongy.util.InternalAuthHandler
 import io.vertx.core.Vertx
 import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.Router
@@ -15,14 +16,21 @@ import javax.inject.Inject
 
 class CouponService @Inject constructor(
   private val vertx: Vertx,
+  private val internalAuthHandler: InternalAuthHandler,
   private val getCouponsHandler: GetCouponsHandler,
   private val createCouponHandler: CreateCouponHandler,
 ) : IService {
   override fun gerRouter(): Router {
     val router: Router = Router.router(vertx)
     router.route().handler(BodyHandler.create())
-    router.route("/").method(HttpMethod.POST).coroutineHandler { createCoupon(it) }
-    router.route("/").method(HttpMethod.GET).coroutineHandler { getCoupons(it) }
+    router.route("/").method(HttpMethod.POST).coroutineHandler {
+      internalAuthHandler.handle(it)
+      createCoupon(it)
+    }
+    router.route("/").method(HttpMethod.GET).coroutineHandler {
+      internalAuthHandler.handle(it)
+      getCoupons(it)
+    }
     return router
   }
 

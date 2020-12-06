@@ -15,6 +15,7 @@ import javax.inject.Singleton
     VertxModule::class,
     GsonModule::class,
     DatabaseModule::class,
+    InternalAuthModule::class,
   ]
 )
 interface Component {

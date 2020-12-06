@@ -1,5 +1,6 @@
 package com.github.pjongy.extension
 
+import com.github.pjongy.exception.AuthorizationRequired
 import com.github.pjongy.exception.Duplicated
 import com.github.pjongy.exception.InvalidParameter
 import com.github.pjongy.exception.PermissionRequired
@@ -22,6 +23,9 @@ suspend fun exceptionHandler(routingContext: RoutingContext, fn: suspend () -> S
     e.message
   } catch (e: Duplicated) {
     response.statusCode = 409
+    e.message
+  } catch (e: AuthorizationRequired) {
+    response.statusCode = 401
     e.message
   }
 
