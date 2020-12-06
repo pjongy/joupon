@@ -15,7 +15,45 @@
 
 ---
 
-## Run
-```shell script
-$ ./gradlew run
+## Quick start (on local)
+
+### Pre-requisites
+- docker >= 19.03.8
+- docker-compose >= 1.25.5
+
+```
+$ docker-compose -f local-docker-compose.yml up -d
+```
+
+## Project structure
+```
+/
+  /src/main/
+    /kotlin
+      /com/github/pjongy
+    /resource
+```
+
+### Pre-requisite
+- openjdk 12
+- Run mysql server and create database
+    ```
+    $ docker run -d -e  MYSQL_ROOT_PASSWORD={..mysql password..} -p 3306:3306 mysql
+    ```
+
+## Build
+```
+$ docker build . -f ./Dockerfile
+```
+
+## Start
+```
+$ docker run \
+ -e APP_CONFIG=local \
+ -e JOUPON__MYSQL__JDBC_URL={..mysql connection jdbc url..} \
+ -e JOUPON__MYSQL__USER={..mysql user..} \
+ -e JOUPON__MYSQL__PASSWORD={..mysql password..} \
+ -e JOUPON__INTERNAL_API_KEYS={..comma separated internal access keys..} \
+ -p 80:8080\
+ pjongy/joupon
 ```
