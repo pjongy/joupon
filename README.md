@@ -4,7 +4,7 @@
   <br/>
   <br/>
   <p>
-    Installable coupon/promotion managing service
+    Installable coupon managing service
   </p>
   <p>
     <a href="https://github.com/pjongy/joupon/blob/master/LICENSE">
@@ -14,6 +14,10 @@
 </div>
 
 ---
+
+## API specification
+[API specification document](./API.README.md)
+
 
 ## Quick start (on local)
 
