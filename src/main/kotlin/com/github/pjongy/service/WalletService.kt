@@ -44,6 +44,7 @@ class WalletService @Inject constructor(
         ownerId = routingContext.pathParam("owner_id").toString(),
         page = routingContext.queryParam("page").last().toInt(),
         pageSize = routingContext.queryParam("page_size").last().toInt(),
+        status = routingContext.queryParam("status"),
       )
     } catch (e: Exception) {
       throw InvalidParameter(e.message ?: "Parameters not satisfied")

@@ -21,6 +21,18 @@ class CouponWalletRepository @Inject constructor(
   private val db: Database,
   private val clock: Clock,
 ) {
+  companion object {
+    val AVAILABLE_STRING_TO_STATUS = mapOf(
+      "UNUSED" to CouponWalletStatus.UNUSED,
+      "USING" to CouponWalletStatus.USING,
+      "USED" to CouponWalletStatus.USED,
+    )
+    val AVAILABLE_STATUS_TO_STRING = mapOf(
+      CouponWalletStatus.UNUSED to "UNUSED",
+      CouponWalletStatus.USING to "USING",
+      CouponWalletStatus.USED to "USED",
+    )
+  }
 
   suspend fun countByCouponId(id: UUID): Long {
     return newSuspendedTransaction(db = db) {
@@ -44,6 +56,7 @@ class CouponWalletRepository @Inject constructor(
 
   suspend fun findCouponsByUserId(
     ownerId: String,
+    status: List<CouponWalletStatus>,
     start: Long,
     size: Int,
   ): Pair<Long, List<CouponEntity>> {
@@ -53,7 +66,8 @@ class CouponWalletRepository @Inject constructor(
         .select {
           Coupon.status eq CouponStatus.NORMAL and
             (CouponWallet.ownerId eq ownerId) and
-            (Coupon.expiredAt greaterEq Instant.now(clock))
+            (Coupon.expiredAt greaterEq Instant.now(clock)) and
+            (CouponWallet.status inList status)
         }
       val couponTotal = query.count()
       val coupons = CouponEntity.wrapRows(query.limit(size, start)).toList()

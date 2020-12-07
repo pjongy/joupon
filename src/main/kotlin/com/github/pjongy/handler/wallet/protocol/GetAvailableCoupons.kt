@@ -4,6 +4,7 @@ data class GetAvailableCouponsRequest(
   val ownerId: String,
   val page: Int,
   val pageSize: Int,
+  val status: List<String>,
 )
 
 data class GetAvailableCouponsResponse(
