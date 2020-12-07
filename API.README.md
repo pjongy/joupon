@@ -193,6 +193,7 @@ val AVAILABLE_STRING_TO_STATUS = mapOf(
         }
       }
       ```
+
   - /{owner_id}/coupons/{coupon_id}/status/{status} *PUT*
     - purpose: Change issued coupon's status (AVAILABLE_STRING_TO_STATUS) by internal server like: prepare payment(USING), after payment (USED)
     - query_string: `Empty`
@@ -212,3 +213,16 @@ val AVAILABLE_STRING_TO_STATUS = mapOf(
       }
       ```
 
+  - /{owner_id}/coupons/{coupon_id}/status *GET*
+    - purpose: Get issued coupon's status (AVAILABLE_STRING_TO_STATUS)
+    - query_string: `Empty`
+    - request: `Empty`
+    - request-header: `Empty`
+    - response:
+      ```
+      {
+        "owner_id": "owner_id_string",
+        "coupon_id": "91d8d329-16f7-4a6e-9c1d-47fe28fc6a6d",
+        "status": ...updated status...
+      }
+      ```

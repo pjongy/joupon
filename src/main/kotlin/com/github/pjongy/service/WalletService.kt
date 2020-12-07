@@ -3,9 +3,11 @@ package com.github.pjongy.service
 import com.github.pjongy.exception.InvalidParameter
 import com.github.pjongy.handler.wallet.ChangeCouponStatusHandler
 import com.github.pjongy.handler.wallet.GetAvailableCouponsHandler
+import com.github.pjongy.handler.wallet.GetCouponStatusHandler
 import com.github.pjongy.handler.wallet.IssueCouponHandler
 import com.github.pjongy.handler.wallet.protocol.ChangeCouponStatusRequest
 import com.github.pjongy.handler.wallet.protocol.GetAvailableCouponsRequest
+import com.github.pjongy.handler.wallet.protocol.GetCouponStatusRequest
 import com.github.pjongy.handler.wallet.protocol.IssueCouponRequest
 import com.github.pjongy.service.handler.InternalAuthHandler
 import com.github.pjongy.service.handler.coroutineHandler
@@ -22,6 +24,7 @@ class WalletService @Inject constructor(
   private val getAvailableCouponsHandler: GetAvailableCouponsHandler,
   private val issueCouponHandler: IssueCouponHandler,
   private val changeCouponStatusHandler: ChangeCouponStatusHandler,
+  private val getCouponStatusHandler: GetCouponStatusHandler,
 ) : IService {
   override fun gerRouter(): Router {
     val router: Router = Router.router(vertx)
@@ -34,6 +37,9 @@ class WalletService @Inject constructor(
         internalAuthHandler.handle(it)
         changeCouponStatus(it)
       }
+    router.route("/:owner_id/coupons/:coupon_id/status")
+      .method(HttpMethod.GET)
+      .coroutineHandler { getCouponStatus(it) }
     return router
   }
 
@@ -77,5 +83,18 @@ class WalletService @Inject constructor(
       throw InvalidParameter(e.message ?: "Parameters not satisfied")
     }
     return changeCouponStatusHandler.handle(request = request)
+  }
+
+  private suspend fun getCouponStatus(routingContext: RoutingContext): String {
+    val request = try {
+      // NOTE(pjongy): Only allows last parameter for same key
+      GetCouponStatusRequest(
+        ownerId = routingContext.pathParam("owner_id").toString(),
+        couponId = routingContext.pathParam("coupon_id").toString(),
+      )
+    } catch (e: Exception) {
+      throw InvalidParameter(e.message ?: "Parameters not satisfied")
+    }
+    return getCouponStatusHandler.handle(request = request)
   }
 }

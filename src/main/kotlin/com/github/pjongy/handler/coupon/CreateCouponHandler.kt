@@ -7,7 +7,6 @@ import com.github.pjongy.repository.CouponRepository
 import com.google.gson.Gson
 import java.time.Clock
 import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 class CreateCouponHandler @Inject constructor(
