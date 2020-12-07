@@ -51,6 +51,8 @@ class CouponService @Inject constructor(
         discountRate = bodyJson.getFloat("discount_rate"),
         discountAmount = bodyJson.getInteger("discount_amount"),
         expiredAt = bodyJson.getString("expired_at"),
+        description = bodyJson.getString("description"),
+        imageUrl = bodyJson.getString("image_url"),
       )
     } catch (e: Exception) {
       throw InvalidParameter(e.message ?: "Parameters not satisfied")

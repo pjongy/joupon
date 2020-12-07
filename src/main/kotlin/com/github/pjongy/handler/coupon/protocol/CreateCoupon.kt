@@ -19,6 +19,7 @@ data class CreateCouponResponse(
   val discountRate: Float?,
   val discountAmount: Int?,
   val createdAt: String,
+  val expiredAt: String,
   val description: String,
   val imageUrl: String,
 )

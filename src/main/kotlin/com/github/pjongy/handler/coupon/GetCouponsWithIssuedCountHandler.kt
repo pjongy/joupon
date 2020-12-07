@@ -32,6 +32,7 @@ class GetCouponsWithIssuedCountHandler @Inject constructor(
             discountAmount = it.coupon.discountAmount,
             discountRate = it.coupon.discountRate,
             createdAt = it.coupon.createdAt.toISO8601(clock.zone),
+            expiredAt = it.coupon.createdAt.toISO8601(clock.zone),
             description = it.coupon.description,
             imageUrl = it.coupon.imageUrl,
           ),

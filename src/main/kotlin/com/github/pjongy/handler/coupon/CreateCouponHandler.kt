@@ -1,5 +1,6 @@
 package com.github.pjongy.handler.coupon
 
+import com.github.pjongy.extension.toISO8601
 import com.github.pjongy.handler.coupon.protocol.CreateCouponRequest
 import com.github.pjongy.handler.coupon.protocol.CreateCouponResponse
 import com.github.pjongy.repository.CouponRepository
@@ -34,9 +35,8 @@ class CreateCouponHandler @Inject constructor(
       totalAmount = coupon.totalAmount,
       discountAmount = coupon.discountAmount,
       discountRate = coupon.discountRate,
-      createdAt = ZonedDateTime
-        .ofInstant(coupon.createdAt, clock.zone)
-        .format(DateTimeFormatter.ISO_DATE_TIME),
+      createdAt = coupon.createdAt.toISO8601(clock.zone),
+      expiredAt = coupon.createdAt.toISO8601(clock.zone),
       description = coupon.description,
       imageUrl = coupon.imageUrl,
     )
