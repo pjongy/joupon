@@ -1,5 +1,6 @@
 package com.github.pjongy.handler.wallet
 
+import com.github.pjongy.extension.toISO8601
 import com.github.pjongy.handler.wallet.protocol.Coupon
 import com.github.pjongy.handler.wallet.protocol.GetAvailableCouponsRequest
 import com.github.pjongy.handler.wallet.protocol.GetAvailableCouponsResponse
@@ -32,6 +33,9 @@ class GetAvailableCouponsHandler @Inject constructor(
           category = coupon.category,
           discountAmount = coupon.discountAmount,
           discountRate = coupon.discountRate,
+          expiredAt = coupon.expiredAt.toISO8601(clock.zone),
+          description = coupon.description,
+          imageUrl = coupon.imageUrl,
         )
       }
     )

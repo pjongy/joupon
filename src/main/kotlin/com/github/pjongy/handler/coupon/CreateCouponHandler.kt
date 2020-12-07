@@ -23,6 +23,8 @@ class CreateCouponHandler @Inject constructor(
       discountAmount = request.discountAmount,
       discountRate = request.discountRate,
       expiredAt = ZonedDateTime.parse(request.expiredAt),
+      description = request.description,
+      imageUrl = request.imageUrl,
     )
 
     val response = CreateCouponResponse(
@@ -35,6 +37,8 @@ class CreateCouponHandler @Inject constructor(
       createdAt = ZonedDateTime
         .ofInstant(coupon.createdAt, clock.zone)
         .format(DateTimeFormatter.ISO_DATE_TIME),
+      description = coupon.description,
+      imageUrl = coupon.imageUrl,
     )
     return gson.toJson(response)
   }

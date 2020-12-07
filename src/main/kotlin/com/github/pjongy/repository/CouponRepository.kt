@@ -50,6 +50,8 @@ class CouponRepository @Inject constructor(
     totalAmount: Int,
     discountRate: Float?,
     discountAmount: Int?,
+    description: String,
+    imageUrl: String,
     expiredAt: ZonedDateTime,
   ): CouponEntity {
     if (discountAmount == null && discountRate == null) {
@@ -63,6 +65,8 @@ class CouponRepository @Inject constructor(
         this.totalAmount = totalAmount
         this.discountRate = discountRate
         this.discountAmount = discountAmount
+        this.description = description
+        this.imageUrl = imageUrl
         this.createdAt = Instant.now(clock)
         this.expiredAt = expiredAt.toInstant()
       }
@@ -83,6 +87,8 @@ class CouponRepository @Inject constructor(
           Coupon.totalAmount,
           Coupon.discountAmount,
           Coupon.discountRate,
+          Coupon.description,
+          Coupon.imageUrl,
           Coupon.createdAt,
           Coupon.expiredAt,
           issuedCount,

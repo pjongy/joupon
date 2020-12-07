@@ -6,4 +6,7 @@ data class Coupon(
   val category: String,
   val discountAmount: Int?,
   val discountRate: Float?,
+  val expiredAt: String,
+  val description: String,
+  val imageUrl: String,
 )

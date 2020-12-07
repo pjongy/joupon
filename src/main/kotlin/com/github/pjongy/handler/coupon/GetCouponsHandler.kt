@@ -33,7 +33,9 @@ class GetCouponsHandler @Inject constructor(
           totalAmount = coupon.totalAmount,
           discountAmount = coupon.discountAmount,
           discountRate = coupon.discountRate,
-          createdAt = coupon.createdAt.toISO8601(clock.zone)
+          createdAt = coupon.createdAt.toISO8601(clock.zone),
+          description = coupon.description,
+          imageUrl = coupon.imageUrl,
         )
       }
     )
