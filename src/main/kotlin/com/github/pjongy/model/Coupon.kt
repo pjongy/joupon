@@ -1,6 +1,6 @@
 package com.github.pjongy.model
 
-import com.github.pjongy.extension.varcharText
+import com.github.pjongy.extension.textUTF8
 import com.github.pjongy.extension.varcharUTF8
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
@@ -21,8 +21,8 @@ object Coupon : UUIDTable("coupon") {
   val discountAmount: Column<Int?> = integer("discount_amount").nullable()
   val category: Column<String> = varcharUTF8("category", 32).index()
   val name: Column<String> = varcharUTF8("name", 32)
-  val description: Column<String> = varcharText("description")
-  val imageUrl: Column<String> = varcharText("image_url")
+  val description: Column<String> = textUTF8("description")
+  val imageUrl: Column<String> = textUTF8("image_url")
   val createdAt = timestamp("created_at")
   val expiredAt = timestamp("expired_at")
   val status = enumeration("status", CouponStatus::class)

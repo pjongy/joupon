@@ -11,7 +11,7 @@ fun Table.varcharUTF8(
   collate: String = "utf8mb4_unicode_ci"
 ): Column<String> = registerColumn(name, VarCharColumnType(length, collate))
 
-fun Table.varcharText(
+fun Table.textUTF8(
   name: String,
   collate: String = "utf8mb4_unicode_ci"
 ): Column<String> = registerColumn(name, TextColumnType(collate))
