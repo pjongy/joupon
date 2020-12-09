@@ -3,10 +3,10 @@ package com.github.pjongy.service
 import com.github.pjongy.exception.InvalidParameter
 import com.github.pjongy.handler.coupon.CreateCouponHandler
 import com.github.pjongy.handler.coupon.GetCouponsHandler
-import com.github.pjongy.handler.coupon.GetCouponsWithIssuedCountHandler
+import com.github.pjongy.handler.coupon.GetCouponsWithUsageStatusHandler
 import com.github.pjongy.handler.coupon.protocol.CreateCouponRequest
 import com.github.pjongy.handler.coupon.protocol.GetCouponsRequest
-import com.github.pjongy.handler.coupon.protocol.GetCouponsWithIssuedCountRequest
+import com.github.pjongy.handler.coupon.protocol.GetCouponsWithUsageStatusRequest
 import com.github.pjongy.service.handler.InternalAuthHandler
 import com.github.pjongy.service.handler.coroutineHandler
 import io.vertx.core.Vertx
@@ -21,7 +21,7 @@ class CouponService @Inject constructor(
   private val internalAuthHandler: InternalAuthHandler,
   private val getCouponsHandler: GetCouponsHandler,
   private val createCouponHandler: CreateCouponHandler,
-  private val getCouponsWithIssuedCountHandler: GetCouponsWithIssuedCountHandler,
+  private val getCouponsWithUsageStatusHandler: GetCouponsWithUsageStatusHandler,
 ) : IService {
   override fun gerRouter(): Router {
     val router: Router = Router.router(vertx)
@@ -76,12 +76,12 @@ class CouponService @Inject constructor(
   private suspend fun getCouponWithIssuedTotal(routingContext: RoutingContext): String {
     val request = try {
       // NOTE(pjongy): Only allows last parameter for same key
-      GetCouponsWithIssuedCountRequest(
+      GetCouponsWithUsageStatusRequest(
         couponIds = routingContext.queryParam("coupon_ids"),
       )
     } catch (e: Exception) {
       throw InvalidParameter(e.message ?: "Parameters not satisfied")
     }
-    return getCouponsWithIssuedCountHandler.handle(request = request)
+    return getCouponsWithUsageStatusHandler.handle(request = request)
   }
 }

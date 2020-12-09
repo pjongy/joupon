@@ -8,7 +8,6 @@ import com.github.pjongy.handler.wallet.protocol.ChangeCouponStatusResponse
 import com.github.pjongy.model.CouponStatus
 import com.github.pjongy.repository.CouponRepository
 import com.github.pjongy.repository.CouponWalletRepository
-import com.github.pjongy.repository.CouponWalletRepository.Companion.AVAILABLE_STATUS_TO_STRING
 import com.github.pjongy.repository.CouponWalletRepository.Companion.AVAILABLE_STRING_TO_STATUS
 import com.google.gson.Gson
 import java.time.Clock

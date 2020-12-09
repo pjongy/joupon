@@ -2,12 +2,12 @@ package com.github.pjongy.model
 
 import com.github.pjongy.extension.textUTF8
 import com.github.pjongy.extension.varcharUTF8
-import java.time.Instant
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.`java-time`.timestamp
-import java.util.UUID
 import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.`java-time`.timestamp
+import java.time.Instant
+import java.util.UUID
 
 enum class CouponStatus {
   NORMAL,
@@ -59,7 +59,9 @@ fun wrapCouponRow(row: ResultRow): CouponRow {
   )
 }
 
-data class CouponWithIssuedCount(
-  val issuedTotal: Long,
+data class CouponWithUsageStatus(
+  val usedTotal: Long,
+  val unusedTotal: Long,
+  val usingTotal: Long,
   val coupon: CouponRow,
 )

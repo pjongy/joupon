@@ -91,7 +91,7 @@ In this case, framework vert.x supports repeated query string as multiple defini
       ```
 
   - /fetch-with-issued GET
-    - purpose: Create a coupon (It can be issued by users)
+    - purpose: Get issued coupons' usage status (coupon can be issued by users)
     - query_string:
       ```
       coupon_ids=...fetch target coupon id (UUID)... [repeated]
@@ -106,7 +106,7 @@ In this case, framework vert.x supports repeated query string as multiple defini
     - response:
       ```
       {
-        "coupons_with_issued_count": [
+        "coupons_with_usage_status": [
           {
             "coupon": {
               "id": "91d8d329-16f7-4a6e-9c1d-47fe28fc6a6d",
@@ -120,7 +120,9 @@ In this case, framework vert.x supports repeated query string as multiple defini
               "description": "coupon description",
               "image_url": "https://image.coupon/url"
             },
-            "issued": 1
+            "using": 0,
+            "unused": 0,
+            "used": 1
           },
         ]
       }

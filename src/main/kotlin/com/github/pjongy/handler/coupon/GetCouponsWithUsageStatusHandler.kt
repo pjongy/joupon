@@ -2,28 +2,29 @@ package com.github.pjongy.handler.coupon
 
 import com.github.pjongy.extension.toISO8601
 import com.github.pjongy.handler.coupon.protocol.Coupon
-import com.github.pjongy.handler.coupon.protocol.CouponWithIssuedCount
-import com.github.pjongy.handler.coupon.protocol.GetCouponsWithIssuedCountRequest
-import com.github.pjongy.handler.coupon.protocol.GetCouponsWithIssuedCountResponse
+import com.github.pjongy.handler.coupon.protocol.CouponWithUsageStatus
+import com.github.pjongy.handler.coupon.protocol.GetCouponsWithUsageStatusRequest
+import com.github.pjongy.handler.coupon.protocol.GetCouponsWithUsageStatusResponse
 import com.github.pjongy.repository.CouponRepository
 import com.google.gson.Gson
 import java.time.Clock
 import java.util.UUID
 import javax.inject.Inject
 
-class GetCouponsWithIssuedCountHandler @Inject constructor(
+class GetCouponsWithUsageStatusHandler @Inject constructor(
   private val clock: Clock,
   private val gson: Gson,
   private val couponRepository: CouponRepository,
 ) {
 
-  suspend fun handle(request: GetCouponsWithIssuedCountRequest): String {
-    val couponWithUsages = couponRepository.getCouponsWithIssuedCount(
+  suspend fun handle(request: GetCouponsWithUsageStatusRequest): String {
+    val couponWithUsages = couponRepository.getCouponsWithUsageStatus(
       request.couponIds.map { UUID.fromString(it) }
-    )
-    val response = GetCouponsWithIssuedCountResponse(
-      couponsWithIssuedCount = couponWithUsages.map {
-        CouponWithIssuedCount(
+    ).filterNotNull()
+
+    val response = GetCouponsWithUsageStatusResponse(
+      couponsWithUsageStatus = couponWithUsages.map {
+        CouponWithUsageStatus(
           coupon = Coupon(
             id = it.coupon.id.toString(),
             name = it.coupon.name,
@@ -36,7 +37,9 @@ class GetCouponsWithIssuedCountHandler @Inject constructor(
             description = it.coupon.description,
             imageUrl = it.coupon.imageUrl,
           ),
-          issued = it.issuedTotal.toInt(),
+          used = it.usedTotal.toInt(),
+          unused = it.unusedTotal.toInt(),
+          using = it.usingTotal.toInt(),
         )
       }
     )

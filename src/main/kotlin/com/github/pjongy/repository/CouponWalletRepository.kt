@@ -9,18 +9,18 @@ import com.github.pjongy.model.CouponWalletStatus
 import com.github.pjongy.model.wrapCouponRow
 import com.github.pjongy.model.wrapCouponWalletRow
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.JoinType
 import org.jetbrains.exposed.sql.Slf4jSqlDebugLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.sql.update
 import java.time.Clock
 import java.time.Instant
 import java.util.UUID
 import javax.inject.Inject
-import org.jetbrains.exposed.sql.JoinType
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.update
 
 class CouponWalletRepository @Inject constructor(
   private val db: Database,

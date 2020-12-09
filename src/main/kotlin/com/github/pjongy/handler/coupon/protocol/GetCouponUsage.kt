@@ -1,14 +1,16 @@
 package com.github.pjongy.handler.coupon.protocol
 
-data class CouponWithIssuedCount(
+data class CouponWithUsageStatus(
   val coupon: Coupon,
-  val issued: Int,
+  val using: Int,
+  val unused: Int,
+  val used: Int,
 )
 
-data class GetCouponsWithIssuedCountRequest(
+data class GetCouponsWithUsageStatusRequest(
   val couponIds: List<String>,
 )
 
-data class GetCouponsWithIssuedCountResponse(
-  val couponsWithIssuedCount: List<CouponWithIssuedCount>
+data class GetCouponsWithUsageStatusResponse(
+  val couponsWithUsageStatus: List<CouponWithUsageStatus>
 )
