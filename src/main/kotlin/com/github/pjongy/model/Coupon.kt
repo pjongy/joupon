@@ -2,13 +2,12 @@ package com.github.pjongy.model
 
 import com.github.pjongy.extension.textUTF8
 import com.github.pjongy.extension.varcharUTF8
-import org.jetbrains.exposed.dao.UUIDEntity
-import org.jetbrains.exposed.dao.UUIDEntityClass
-import org.jetbrains.exposed.dao.id.EntityID
+import java.time.Instant
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.`java-time`.timestamp
 import java.util.UUID
+import org.jetbrains.exposed.sql.ResultRow
 
 enum class CouponStatus {
   NORMAL,
@@ -30,22 +29,37 @@ object Coupon : UUIDTable("coupon") {
     .index()
 }
 
-class CouponEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
-  companion object : UUIDEntityClass<CouponEntity>(Coupon)
+data class CouponRow(
+  val id: UUID,
+  val totalAmount: Int,
+  val discountRate: Float?,
+  val discountAmount: Int?,
+  val category: String,
+  val name: String,
+  val description: String,
+  val imageUrl: String,
+  val createdAt: Instant,
+  val expiredAt: Instant,
+  val status: CouponStatus,
+)
 
-  var totalAmount by Coupon.totalAmount
-  var discountRate by Coupon.discountRate
-  var discountAmount by Coupon.discountAmount
-  var category by Coupon.category
-  var name by Coupon.name
-  var description by Coupon.description
-  var imageUrl by Coupon.imageUrl
-  var createdAt by Coupon.createdAt
-  var expiredAt by Coupon.expiredAt
-  var status by Coupon.status
+fun wrapCouponRow(row: ResultRow): CouponRow {
+  return CouponRow(
+    id = row[Coupon.id].value,
+    totalAmount = row[Coupon.totalAmount],
+    discountRate = row[Coupon.discountRate],
+    discountAmount = row[Coupon.discountAmount],
+    category = row[Coupon.category],
+    name = row[Coupon.name],
+    description = row[Coupon.description],
+    imageUrl = row[Coupon.imageUrl],
+    createdAt = row[Coupon.createdAt],
+    expiredAt = row[Coupon.expiredAt],
+    status = row[Coupon.status],
+  )
 }
 
 data class CouponWithIssuedCount(
   val issuedTotal: Long,
-  val coupon: CouponEntity,
+  val coupon: CouponRow,
 )

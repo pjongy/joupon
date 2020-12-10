@@ -1,6 +1,7 @@
 package com.github.pjongy.handler.wallet
 
 import com.github.pjongy.exception.Duplicated
+import com.github.pjongy.exception.HandlerException
 import com.github.pjongy.exception.UnAvailableData
 import com.github.pjongy.extension.toISO8601
 import com.github.pjongy.handler.wallet.protocol.Coupon
@@ -36,7 +37,8 @@ class IssueCouponHandler @Inject constructor(
       throw UnAvailableData("available count: ${coupon.totalAmount}")
     }
 
-    val couponWallet = couponWalletRepository.create(coupon = coupon, ownerId = request.ownerId)
+    val couponWallet = couponWalletRepository.create(couponId = couponId, ownerId = request.ownerId)
+      ?: throw HandlerException("coupon wallet insertion failed")
     val response = IssueCouponResponse(
       ownerId = couponWallet.ownerId,
       coupon = Coupon(

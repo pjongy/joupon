@@ -42,13 +42,13 @@ class ChangeCouponStatusHandler @Inject constructor(
     }
 
     AVAILABLE_STRING_TO_STATUS[request.status]?.let {
-      couponWalletRepository.updateCouponWalletStatus(couponWallet, it)
+      couponWalletRepository.updateCouponWalletStatus(request.ownerId, coupon.id, it)
     } ?: throw InvalidParameter("invalid status: ${request.status}")
 
     val response = ChangeCouponStatusResponse(
       ownerId = couponWallet.ownerId,
       couponId = request.couponId,
-      status = AVAILABLE_STATUS_TO_STRING[couponWallet.status] ?: "UNKNOWN"
+      status = request.status,
     )
     return gson.toJson(response)
   }

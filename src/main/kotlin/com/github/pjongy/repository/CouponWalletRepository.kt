@@ -1,11 +1,13 @@
 package com.github.pjongy.repository
 
 import com.github.pjongy.model.Coupon
-import com.github.pjongy.model.CouponEntity
+import com.github.pjongy.model.CouponRow
 import com.github.pjongy.model.CouponStatus
 import com.github.pjongy.model.CouponWallet
-import com.github.pjongy.model.CouponWalletEntity
+import com.github.pjongy.model.CouponWalletRow
 import com.github.pjongy.model.CouponWalletStatus
+import com.github.pjongy.model.wrapCouponRow
+import com.github.pjongy.model.wrapCouponWalletRow
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.Slf4jSqlDebugLogger
 import org.jetbrains.exposed.sql.addLogger
@@ -16,6 +18,9 @@ import java.time.Clock
 import java.time.Instant
 import java.util.UUID
 import javax.inject.Inject
+import org.jetbrains.exposed.sql.JoinType
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.update
 
 class CouponWalletRepository @Inject constructor(
   private val db: Database,
@@ -37,19 +42,20 @@ class CouponWalletRepository @Inject constructor(
   suspend fun countByCouponId(id: UUID): Long {
     return newSuspendedTransaction(db = db) {
       addLogger(Slf4jSqlDebugLogger)
-      CouponWalletEntity
-        .find { CouponWallet.coupon eq id }
-        .count()
+      CouponWallet.select { CouponWallet.couponId eq id }.count()
     }
   }
 
-  suspend fun create(coupon: CouponEntity, ownerId: String): CouponWalletEntity {
+  suspend fun create(couponId: UUID, ownerId: String): CouponWalletRow? {
     return newSuspendedTransaction(db = db) {
       addLogger(Slf4jSqlDebugLogger)
-      CouponWalletEntity.new {
-        this.coupon = coupon
-        this.ownerId = ownerId
-        this.createdAt = Instant.now(clock)
+      val insertQuery = CouponWallet.insert {
+        it[this.couponId] = couponId
+        it[this.ownerId] = ownerId
+        it[this.createdAt] = Instant.now(clock)
+      }
+      insertQuery.resultedValues?.let {
+        wrapCouponWalletRow(it.first())
       }
     }
   }
@@ -59,18 +65,23 @@ class CouponWalletRepository @Inject constructor(
     status: List<CouponWalletStatus>,
     start: Long,
     size: Int,
-  ): Pair<Long, List<CouponEntity>> {
+  ): Pair<Long, List<CouponRow>> {
     return newSuspendedTransaction(db = db) {
       addLogger(Slf4jSqlDebugLogger)
-      val query = (Coupon innerJoin CouponWallet)
-        .select {
-          Coupon.status eq CouponStatus.NORMAL and
-            (CouponWallet.ownerId eq ownerId) and
-            (Coupon.expiredAt greaterEq Instant.now(clock)) and
-            (CouponWallet.status inList status)
+      val query = Coupon.join(
+        CouponWallet,
+        JoinType.INNER,
+        additionalConstraint = {
+          Coupon.id eq CouponWallet.couponId
         }
+      ).select {
+        Coupon.status eq CouponStatus.NORMAL and
+          (CouponWallet.ownerId eq ownerId) and
+          (Coupon.expiredAt greaterEq Instant.now(clock)) and
+          (CouponWallet.status inList status)
+      }
       val couponTotal = query.count()
-      val coupons = CouponEntity.wrapRows(query.limit(size, start)).toList()
+      val coupons = query.limit(size, start).map { wrapCouponRow(it) }
       Pair(couponTotal, coupons)
     }
   }
@@ -81,8 +92,9 @@ class CouponWalletRepository @Inject constructor(
   ): Boolean {
     return newSuspendedTransaction(db = db) {
       addLogger(Slf4jSqlDebugLogger)
-      CouponWalletEntity.find {
-        CouponWallet.coupon eq couponId and (CouponWallet.ownerId eq ownerId)
+      CouponWallet.select {
+        CouponWallet.couponId eq couponId and
+          (CouponWallet.ownerId eq ownerId)
       }.count() > 0
     }
   }
@@ -90,26 +102,30 @@ class CouponWalletRepository @Inject constructor(
   suspend fun findByOwnerIdAndCouponId(
     ownerId: String,
     couponId: UUID,
-  ): CouponWalletEntity? {
+  ): CouponWalletRow? {
     return newSuspendedTransaction(db = db) {
       addLogger(Slf4jSqlDebugLogger)
-      try {
-        CouponWalletEntity.find {
-          CouponWallet.coupon eq couponId and (CouponWallet.ownerId eq ownerId)
-        }.first()
-      } catch (e: NoSuchElementException) {
-        null
-      }
+      val resultRow = CouponWallet.select {
+        CouponWallet.couponId eq couponId and
+          (CouponWallet.ownerId eq ownerId)
+      }.firstOrNull()
+      resultRow?.let { wrapCouponWalletRow(it) }
     }
   }
 
   suspend fun updateCouponWalletStatus(
-    couponWalletEntity: CouponWalletEntity,
+    ownerId: String,
+    couponId: UUID,
     couponWalletStatus: CouponWalletStatus
   ) {
     return newSuspendedTransaction(db = db) {
       addLogger(Slf4jSqlDebugLogger)
-      couponWalletEntity.status = couponWalletStatus
+      CouponWallet.update({
+        CouponWallet.couponId eq couponId and
+          (CouponWallet.ownerId eq ownerId)
+      }) {
+        it[this.status] = couponWalletStatus
+      }
     }
   }
 }

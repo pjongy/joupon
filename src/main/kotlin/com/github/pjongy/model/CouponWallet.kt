@@ -1,13 +1,12 @@
 package com.github.pjongy.model
 
 import com.github.pjongy.extension.varcharUTF8
-import org.jetbrains.exposed.dao.UUIDEntity
-import org.jetbrains.exposed.dao.UUIDEntityClass
-import org.jetbrains.exposed.dao.id.EntityID
+import java.time.Instant
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.`java-time`.timestamp
 import java.util.UUID
+import org.jetbrains.exposed.sql.ResultRow
 
 enum class CouponWalletStatus {
   UNUSED,
@@ -16,7 +15,7 @@ enum class CouponWalletStatus {
 }
 
 object CouponWallet : UUIDTable("coupon_wallet") {
-  val coupon = reference("coupon", Coupon)
+  val couponId = uuid("coupon_id")
   val ownerId: Column<String> = varcharUTF8("owner_id")
   val createdAt = timestamp("created_at")
   val status = enumeration("status", CouponWalletStatus::class)
@@ -24,10 +23,20 @@ object CouponWallet : UUIDTable("coupon_wallet") {
     .index()
 }
 
-class CouponWalletEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
-  companion object : UUIDEntityClass<CouponWalletEntity>(CouponWallet)
-  var coupon by CouponEntity referencedOn CouponWallet.coupon
-  var ownerId by CouponWallet.ownerId
-  var createdAt by CouponWallet.createdAt
-  var status by CouponWallet.status
+data class CouponWalletRow(
+  val id: UUID,
+  val couponId: UUID,
+  val ownerId: String,
+  val createdAt: Instant,
+  val status: CouponWalletStatus,
+)
+
+fun wrapCouponWalletRow(row: ResultRow): CouponWalletRow {
+  return CouponWalletRow(
+    id = row[CouponWallet.id].value,
+    couponId = row[CouponWallet.couponId],
+    ownerId = row[CouponWallet.ownerId],
+    createdAt = row[CouponWallet.createdAt],
+    status = row[CouponWallet.status],
+  )
 }

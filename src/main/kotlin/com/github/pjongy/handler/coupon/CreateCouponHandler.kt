@@ -1,5 +1,6 @@
 package com.github.pjongy.handler.coupon
 
+import com.github.pjongy.exception.HandlerException
 import com.github.pjongy.extension.toISO8601
 import com.github.pjongy.handler.coupon.protocol.CreateCouponRequest
 import com.github.pjongy.handler.coupon.protocol.CreateCouponResponse
@@ -25,7 +26,7 @@ class CreateCouponHandler @Inject constructor(
       expiredAt = ZonedDateTime.parse(request.expiredAt),
       description = request.description,
       imageUrl = request.imageUrl,
-    )
+    ) ?: throw HandlerException("coupon row insertion failed")
 
     val response = CreateCouponResponse(
       id = coupon.id.toString(),
