@@ -60,6 +60,7 @@ class CouponRepository @Inject constructor(
     description: String,
     imageUrl: String,
     expiredAt: ZonedDateTime,
+    condition: String,
   ): CouponRow? {
     if (discountAmount == null && discountRate == null) {
       throw IllegalArgumentException("either discountAmount or discountRate should be passed")
@@ -76,6 +77,7 @@ class CouponRepository @Inject constructor(
         it[this.imageUrl] = imageUrl
         it[this.createdAt] = Instant.now(clock)
         it[this.expiredAt] = expiredAt.toInstant()
+        it[this.condition] = condition
       }
       insertQuery.resultedValues?.let {
         wrapCouponRow(it.first())

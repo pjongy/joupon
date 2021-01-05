@@ -1,6 +1,7 @@
 package com.github.pjongy.handler.coupon
 
 import com.github.pjongy.extension.toISO8601
+import com.github.pjongy.handler.coupon.protocol.Condition
 import com.github.pjongy.handler.coupon.protocol.Coupon
 import com.github.pjongy.handler.coupon.protocol.GetCouponsRequest
 import com.github.pjongy.handler.coupon.protocol.GetCouponsResponse
@@ -37,6 +38,7 @@ class GetCouponsHandler @Inject constructor(
           expiredAt = coupon.createdAt.toISO8601(clock.zone),
           description = coupon.description,
           imageUrl = coupon.imageUrl,
+          condition = gson.fromJson(coupon.condition, Condition::class.java),
         )
       }
     )

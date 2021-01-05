@@ -9,8 +9,10 @@ import com.github.pjongy.handler.wallet.protocol.ChangeCouponStatusRequest
 import com.github.pjongy.handler.wallet.protocol.GetAvailableCouponsRequest
 import com.github.pjongy.handler.wallet.protocol.GetCouponStatusRequest
 import com.github.pjongy.handler.wallet.protocol.IssueCouponRequest
+import com.github.pjongy.handler.wallet.protocol.IssueCouponRequestBody
 import com.github.pjongy.service.handler.InternalAuthHandler
 import com.github.pjongy.service.handler.coroutineHandler
+import com.google.gson.Gson
 import io.vertx.core.Vertx
 import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.Router
@@ -20,6 +22,7 @@ import javax.inject.Inject
 
 class WalletService @Inject constructor(
   private val vertx: Vertx,
+  private val gson: Gson,
   private val internalAuthHandler: InternalAuthHandler,
   private val getAvailableCouponsHandler: GetAvailableCouponsHandler,
   private val issueCouponHandler: IssueCouponHandler,
@@ -30,7 +33,10 @@ class WalletService @Inject constructor(
     val router: Router = Router.router(vertx)
     router.route().handler(BodyHandler.create())
     router.route("/:owner_id/availables").method(HttpMethod.GET).coroutineHandler { getAvailableCoupons(it) }
-    router.route("/:owner_id/coupons/:coupon_id").method(HttpMethod.POST).coroutineHandler { issueCoupon(it) }
+    router.route("/:owner_id/coupons/:coupon_id").method(HttpMethod.POST).coroutineHandler {
+      internalAuthHandler.handle(it)
+      issueCoupon(it)
+    }
     router.route("/:owner_id/coupons/:coupon_id/status/:status")
       .method(HttpMethod.PUT)
       .coroutineHandler {
@@ -60,10 +66,15 @@ class WalletService @Inject constructor(
 
   private suspend fun issueCoupon(routingContext: RoutingContext): String {
     val request = try {
+      val requestBody = gson.fromJson(
+        routingContext.bodyAsString,
+        IssueCouponRequestBody::class.java,
+      )
       // NOTE(pjongy): Only allows last parameter for same key
       IssueCouponRequest(
         ownerId = routingContext.pathParam("owner_id").toString(),
         couponId = routingContext.pathParam("coupon_id").toString(),
+        properties = requestBody.properties,
       )
     } catch (e: Exception) {
       throw InvalidParameter(e.message ?: "Parameters not satisfied")

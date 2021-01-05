@@ -11,4 +11,5 @@ data class Coupon(
   val expiredAt: String,
   val description: String,
   val imageUrl: String,
+  val condition: Condition,
 )

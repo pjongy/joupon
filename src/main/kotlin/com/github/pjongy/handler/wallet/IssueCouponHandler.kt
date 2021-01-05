@@ -4,6 +4,8 @@ import com.github.pjongy.exception.Duplicated
 import com.github.pjongy.exception.HandlerException
 import com.github.pjongy.exception.UnAvailableData
 import com.github.pjongy.extension.toISO8601
+import com.github.pjongy.handler.wallet.extension.isAvailable
+import com.github.pjongy.handler.wallet.protocol.Condition
 import com.github.pjongy.handler.wallet.protocol.Coupon
 import com.github.pjongy.handler.wallet.protocol.IssueCouponRequest
 import com.github.pjongy.handler.wallet.protocol.IssueCouponResponse
@@ -29,8 +31,15 @@ class IssueCouponHandler @Inject constructor(
     if (isAlreadyIssued) {
       throw Duplicated("already issued coupon")
     }
+
     val couponId = UUID.fromString(request.couponId)
     val coupon = couponRepository.findById(couponId)
+    val condition = gson.fromJson(coupon.condition, Condition::class.java)
+
+    if (!condition.isAvailable(request.properties)) {
+      throw UnAvailableData("condition for coupon is not satisfied")
+    }
+
     val currentCouponTotal = couponWalletRepository.countByCouponId(id = couponId)
 
     if (coupon.totalAmount <= currentCouponTotal) {

@@ -13,6 +13,23 @@ In this case, framework vert.x supports repeated query string as multiple defini
 
 ### Coupon
 
+### Enums
+```kotlin
+// handler/coupon/extension/Condition.kt
+val availableJoinTypes = listOf("AND", "OR")
+val availableOperators = listOf(
+  "int_eq",
+  "int_neq",
+  "int_lte",
+  "int_lt",
+  "int_gte",
+  "int_gt",
+  "str_eq",
+  "str_neq",
+  "contains",
+)
+```
+
 ### API specs
 
 - /coupons
@@ -30,6 +47,16 @@ In this case, framework vert.x supports repeated query string as multiple defini
         "description": "coupon description",
         "image_url": "https://image.coupon/url",
         "expired_at": "9999-01-01T00:00:00Z"
+        "condition": { // It is recursive
+          "conditions": [
+              {
+                "key": ...key string for validate with condition...,
+                "value": ...value string for validate with condition...,
+                "operator": ...operater string for validate with condition...
+              },
+          ],
+          "join_type": ...join type(AND/OR) string for validate with condition...
+        }
       }
       ```
     - request-header:
@@ -51,6 +78,16 @@ In this case, framework vert.x supports repeated query string as multiple defini
         "expired_at": "9999-01-01T00:00:00Z",
         "description": "coupon description",
         "image_url": "https://image.coupon/url"
+        "condition": { // It is recursive
+          "conditions": [
+              {
+                "key": ...key string for validate with condition...,
+                "value": ...value string for validate with condition...,
+                "operator": ...operater string for validate with condition...
+              },
+          ],
+          "join_type": ...join type(AND/OR) string for validate with condition...
+        }
       }
       ```
 
@@ -83,6 +120,16 @@ In this case, framework vert.x supports repeated query string as multiple defini
             "expired_at": "9999-01-01T00:00:00Z",
             "description": "coupon description",
             "image_url": "https://image.coupon/url"
+            "condition": { // It is recursive
+              "conditions": [
+                  {
+                    "key": ...key string for validate with condition...,
+                    "value": ...value string for validate with condition...,
+                    "operator": ...operater string for validate with condition...
+                  },
+              ],
+              "join_type": ...join type(AND/OR) string for validate with condition...
+            }
           }
           ... repeated
         ],
@@ -119,6 +166,16 @@ In this case, framework vert.x supports repeated query string as multiple defini
               "expired_at": "9999-01-01T00:00:00Z",
               "description": "coupon description",
               "image_url": "https://image.coupon/url"
+              "condition": { // It is recursive
+                "conditions": [
+                    {
+                      "key": ...key string for validate with condition...,
+                      "value": ...value string for validate with condition...,
+                      "operator": ...operater string for validate with condition...
+                    },
+                ],
+                "join_type": ...join type(AND/OR) string for validate with condition...
+              }
             },
             "using": 0,
             "unused": 0,
@@ -159,14 +216,14 @@ val AVAILABLE_STRING_TO_STATUS = mapOf(
       {
         "coupons": [
           {
-          "id": "91d8d329-16f7-4a6e-9c1d-47fe28fc6a6d",
-          "name": "coupon name",
-          "category": "COUPON_CATEGORY",
-          "discount_amount": 0,
-          "discount_rate": 0.98,
-          "expired_at": "9999-01-01T00:00:00Z",
-          "description": "coupon description",
-          "image_url": "https://image.coupon/url"
+            "id": "91d8d329-16f7-4a6e-9c1d-47fe28fc6a6d",
+            "name": "coupon name",
+            "category": "COUPON_CATEGORY",
+            "discount_amount": 0,
+            "discount_rate": 0.98,
+            "expired_at": "9999-01-01T00:00:00Z",
+            "description": "coupon description",
+            "image_url": "https://image.coupon/url"
           }
           ... repeated
         ],
@@ -177,8 +234,23 @@ val AVAILABLE_STRING_TO_STATUS = mapOf(
   - /{owner_id}/coupons/{coupon_id} *POST*
     - purpose: Issue coupon (store coupon to owner's wallet)
     - query_string: `Empty`
-    - request: `Empty`
-    - request-header: `Empty`
+    - request:
+      ```
+      {
+      "properties": [
+          {
+            "key": ...key string for validate with condition...,
+            "value": ...value string for validate with condition...
+          }
+        ]
+      }
+      ```
+    - request-header:
+      ```
+      {
+        X-Internal-Key: ...internal api key defined by config...
+      }
+      ```
     - response:
       ```
       {

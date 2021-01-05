@@ -27,6 +27,7 @@ object Coupon : UUIDTable("coupon") {
   val status = enumeration("status", CouponStatus::class)
     .default(CouponStatus.NORMAL)
     .index()
+  val condition: Column<String> = textUTF8("condition")
 }
 
 data class CouponRow(
@@ -41,6 +42,7 @@ data class CouponRow(
   val createdAt: Instant,
   val expiredAt: Instant,
   val status: CouponStatus,
+  val condition: String, // NOTE(pjongy): Json string for represent condition
 )
 
 fun wrapCouponRow(row: ResultRow): CouponRow {
@@ -56,6 +58,7 @@ fun wrapCouponRow(row: ResultRow): CouponRow {
     createdAt = row[Coupon.createdAt],
     expiredAt = row[Coupon.expiredAt],
     status = row[Coupon.status],
+    condition = row[Coupon.condition],
   )
 }
 

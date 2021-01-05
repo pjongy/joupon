@@ -1,7 +1,10 @@
 package com.github.pjongy.handler.coupon
 
 import com.github.pjongy.exception.HandlerException
+import com.github.pjongy.exception.InvalidParameter
 import com.github.pjongy.extension.toISO8601
+import com.github.pjongy.handler.coupon.extension.isValid
+import com.github.pjongy.handler.coupon.protocol.Condition
 import com.github.pjongy.handler.coupon.protocol.CreateCouponRequest
 import com.github.pjongy.handler.coupon.protocol.CreateCouponResponse
 import com.github.pjongy.repository.CouponRepository
@@ -17,6 +20,9 @@ class CreateCouponHandler @Inject constructor(
 ) {
 
   suspend fun handle(request: CreateCouponRequest): String {
+    if (!request.condition.isValid()) {
+      throw InvalidParameter("wrong coupon condition structure")
+    }
     val coupon = couponRepository.createCoupon(
       name = request.name,
       category = request.category,
@@ -26,6 +32,7 @@ class CreateCouponHandler @Inject constructor(
       expiredAt = ZonedDateTime.parse(request.expiredAt),
       description = request.description,
       imageUrl = request.imageUrl,
+      condition = gson.toJson(request.condition),
     ) ?: throw HandlerException("coupon row insertion failed")
 
     val response = CreateCouponResponse(
@@ -39,6 +46,7 @@ class CreateCouponHandler @Inject constructor(
       expiredAt = coupon.createdAt.toISO8601(clock.zone),
       description = coupon.description,
       imageUrl = coupon.imageUrl,
+      condition = gson.fromJson(coupon.condition, Condition::class.java),
     )
     return gson.toJson(response)
   }

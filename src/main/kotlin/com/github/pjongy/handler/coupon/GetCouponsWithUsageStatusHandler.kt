@@ -1,6 +1,7 @@
 package com.github.pjongy.handler.coupon
 
 import com.github.pjongy.extension.toISO8601
+import com.github.pjongy.handler.coupon.protocol.Condition
 import com.github.pjongy.handler.coupon.protocol.Coupon
 import com.github.pjongy.handler.coupon.protocol.CouponWithUsageStatus
 import com.github.pjongy.handler.coupon.protocol.GetCouponsWithUsageStatusRequest
@@ -36,6 +37,7 @@ class GetCouponsWithUsageStatusHandler @Inject constructor(
             expiredAt = it.coupon.createdAt.toISO8601(clock.zone),
             description = it.coupon.description,
             imageUrl = it.coupon.imageUrl,
+            condition = gson.fromJson(it.coupon.condition, Condition::class.java),
           ),
           used = it.usedTotal.toInt(),
           unused = it.unusedTotal.toInt(),

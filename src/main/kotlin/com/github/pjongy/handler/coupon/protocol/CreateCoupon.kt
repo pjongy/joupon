@@ -9,6 +9,7 @@ data class CreateCouponRequestBody(
   val expiredAt: String,
   val description: String,
   val imageUrl: String,
+  val condition: Condition,
 )
 
 data class CreateCouponRequest(
@@ -20,6 +21,7 @@ data class CreateCouponRequest(
   val expiredAt: String,
   val description: String,
   val imageUrl: String,
+  val condition: Condition,
 )
 
 data class CreateCouponResponse(
@@ -33,4 +35,5 @@ data class CreateCouponResponse(
   val expiredAt: String,
   val description: String,
   val imageUrl: String,
+  val condition: Condition,
 )

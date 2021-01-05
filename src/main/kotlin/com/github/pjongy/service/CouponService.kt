@@ -59,6 +59,7 @@ class CouponService @Inject constructor(
         expiredAt = requestBody.expiredAt,
         imageUrl = requestBody.imageUrl,
         totalAmount = requestBody.totalAmount,
+        condition = requestBody.condition,
       )
     } catch (e: Exception) {
       throw InvalidParameter(e.message ?: "Parameters not satisfied")
