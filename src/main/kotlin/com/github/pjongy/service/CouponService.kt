@@ -5,10 +5,12 @@ import com.github.pjongy.handler.coupon.CreateCouponHandler
 import com.github.pjongy.handler.coupon.GetCouponsHandler
 import com.github.pjongy.handler.coupon.GetCouponsWithUsageStatusHandler
 import com.github.pjongy.handler.coupon.protocol.CreateCouponRequest
+import com.github.pjongy.handler.coupon.protocol.CreateCouponRequestBody
 import com.github.pjongy.handler.coupon.protocol.GetCouponsRequest
 import com.github.pjongy.handler.coupon.protocol.GetCouponsWithUsageStatusRequest
 import com.github.pjongy.service.handler.InternalAuthHandler
 import com.github.pjongy.service.handler.coroutineHandler
+import com.google.gson.Gson
 import io.vertx.core.Vertx
 import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.Router
@@ -18,6 +20,7 @@ import javax.inject.Inject
 
 class CouponService @Inject constructor(
   private val vertx: Vertx,
+  private val gson: Gson,
   private val internalAuthHandler: InternalAuthHandler,
   private val getCouponsHandler: GetCouponsHandler,
   private val createCouponHandler: CreateCouponHandler,
@@ -43,16 +46,19 @@ class CouponService @Inject constructor(
 
   private suspend fun createCoupon(routingContext: RoutingContext): String {
     val request = try {
-      val bodyJson = routingContext.bodyAsJson
+      val requestBody = gson.fromJson(
+        routingContext.bodyAsString,
+        CreateCouponRequestBody::class.java,
+      )
       CreateCouponRequest(
-        name = bodyJson.getString("name"),
-        category = bodyJson.getString("category"),
-        totalAmount = bodyJson.getInteger("total_amount"),
-        discountRate = bodyJson.getFloat("discount_rate"),
-        discountAmount = bodyJson.getInteger("discount_amount"),
-        expiredAt = bodyJson.getString("expired_at"),
-        description = bodyJson.getString("description"),
-        imageUrl = bodyJson.getString("image_url"),
+        name = requestBody.name,
+        category = requestBody.category,
+        description = requestBody.description,
+        discountAmount = requestBody.discountAmount,
+        discountRate = requestBody.discountRate,
+        expiredAt = requestBody.expiredAt,
+        imageUrl = requestBody.imageUrl,
+        totalAmount = requestBody.totalAmount,
       )
     } catch (e: Exception) {
       throw InvalidParameter(e.message ?: "Parameters not satisfied")
