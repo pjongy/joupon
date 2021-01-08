@@ -340,3 +340,40 @@ val AVAILABLE_STRING_TO_STATUS = mapOf(
         "status": ...updated status...
       }
       ```
+
+  - /{owner_id}/coupons/{coupon_id}/check-availability *POST*
+    - purpose: Check availability about using coupon (process before change status as USED or USING)
+    - query_string: `Empty`
+    - request:
+      ```
+      {
+      "properties": [
+          {
+            "key": ...key string for validate with condition...,
+            "value": ...value string for validate with condition...
+          }
+        ]
+      }
+      ```
+    - request-header:
+      ```
+      {
+        X-Internal-Key: ...internal api key defined by config...
+      }
+      ```
+    - response:
+      ```
+      {
+        "owner_id": "owner_id_string",
+        "coupon": {
+          "id": "91d8d329-16f7-4a6e-9c1d-47fe28fc6a6d",
+          "name": "coupon name",
+          "category": "COUPON_CATEGORY",
+          "discount_amount": 0,
+          "discount_rate": 0.98,
+          "expired_at": "9999-01-01T00:00:00Z",
+          "description": "coupon description",
+          "image_url": "https://image.coupon/url"
+        }
+      }
+      ```

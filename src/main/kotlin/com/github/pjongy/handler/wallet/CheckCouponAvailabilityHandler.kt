@@ -1,15 +1,16 @@
 package com.github.pjongy.handler.wallet
 
-import com.github.pjongy.exception.Duplicated
 import com.github.pjongy.exception.HandlerException
+import com.github.pjongy.exception.NotFound
 import com.github.pjongy.exception.UnAvailableData
 import com.github.pjongy.extension.toISO8601
 import com.github.pjongy.handler.wallet.extension.isAvailable
+import com.github.pjongy.handler.wallet.protocol.CheckCouponAvailabilityRequest
+import com.github.pjongy.handler.wallet.protocol.CheckCouponAvailabilityResponse
 import com.github.pjongy.handler.wallet.protocol.Condition
 import com.github.pjongy.handler.wallet.protocol.Coupon
-import com.github.pjongy.handler.wallet.protocol.IssueCouponRequest
-import com.github.pjongy.handler.wallet.protocol.IssueCouponResponse
 import com.github.pjongy.model.CouponStatus
+import com.github.pjongy.model.CouponWalletStatus
 import com.github.pjongy.repository.CouponRepository
 import com.github.pjongy.repository.CouponWalletRepository
 import com.google.gson.Gson
@@ -17,25 +18,17 @@ import java.time.Clock
 import java.util.UUID
 import javax.inject.Inject
 
-class IssueCouponHandler @Inject constructor(
+class CheckCouponAvailabilityHandler @Inject constructor(
   private val clock: Clock,
   private val gson: Gson,
   private val couponRepository: CouponRepository,
   private val couponWalletRepository: CouponWalletRepository,
 ) {
 
-  // NOTE(pjongy): It could blows timing issue because of check-and-insert is separated (It should be atomic)
-  suspend fun handle(request: IssueCouponRequest): String {
-    val isAlreadyIssued = couponWalletRepository.checkExistenceByOwnerIdAndCouponId(
-      ownerId = request.ownerId, couponId = UUID.fromString(request.couponId)
-    )
-    if (isAlreadyIssued) {
-      throw Duplicated("already issued coupon")
-    }
-
+  suspend fun handle(request: CheckCouponAvailabilityRequest): String {
     val couponId = UUID.fromString(request.couponId)
     val coupon = couponRepository.findById(couponId)
-    val condition = gson.fromJson(coupon.issuingCondition, Condition::class.java)
+    val condition = gson.fromJson(coupon.usingCondition, Condition::class.java)
 
     if (coupon.status == CouponStatus.DELETED) {
       throw UnAvailableData("coupon is expired")
@@ -45,15 +38,16 @@ class IssueCouponHandler @Inject constructor(
       throw UnAvailableData("condition for coupon is not satisfied")
     }
 
-    val currentCouponTotal = couponWalletRepository.countByCouponId(id = couponId)
+    val couponWallet = couponWalletRepository.findByOwnerIdAndCouponId(
+      couponId = couponId,
+      ownerId = request.ownerId,
+    ) ?: throw NotFound("coupon not found in wallet")
 
-    if (coupon.totalAmount <= currentCouponTotal) {
-      throw UnAvailableData("available count: ${coupon.totalAmount}")
+    if (couponWallet.status != CouponWalletStatus.UNUSED) {
+      throw HandlerException("coupon status is not UNUSED")
     }
 
-    val couponWallet = couponWalletRepository.create(couponId = couponId, ownerId = request.ownerId)
-      ?: throw HandlerException("coupon wallet insertion failed")
-    val response = IssueCouponResponse(
+    val response = CheckCouponAvailabilityResponse(
       ownerId = couponWallet.ownerId,
       coupon = Coupon(
         id = coupon.id.toString(),

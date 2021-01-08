@@ -2,10 +2,13 @@ package com.github.pjongy.service
 
 import com.github.pjongy.exception.InvalidParameter
 import com.github.pjongy.handler.wallet.ChangeCouponStatusHandler
+import com.github.pjongy.handler.wallet.CheckCouponAvailabilityHandler
 import com.github.pjongy.handler.wallet.GetAvailableCouponsHandler
 import com.github.pjongy.handler.wallet.GetCouponStatusHandler
 import com.github.pjongy.handler.wallet.IssueCouponHandler
 import com.github.pjongy.handler.wallet.protocol.ChangeCouponStatusRequest
+import com.github.pjongy.handler.wallet.protocol.CheckCouponAvailabilityRequest
+import com.github.pjongy.handler.wallet.protocol.CheckCouponAvailabilityRequestBody
 import com.github.pjongy.handler.wallet.protocol.GetAvailableCouponsRequest
 import com.github.pjongy.handler.wallet.protocol.GetCouponStatusRequest
 import com.github.pjongy.handler.wallet.protocol.IssueCouponRequest
@@ -28,6 +31,7 @@ class WalletService @Inject constructor(
   private val issueCouponHandler: IssueCouponHandler,
   private val changeCouponStatusHandler: ChangeCouponStatusHandler,
   private val getCouponStatusHandler: GetCouponStatusHandler,
+  private val checkCouponAvailabilityHandler: CheckCouponAvailabilityHandler,
 ) : IService {
   override fun gerRouter(): Router {
     val router: Router = Router.router(vertx)
@@ -46,6 +50,12 @@ class WalletService @Inject constructor(
     router.route("/:owner_id/coupons/:coupon_id/status")
       .method(HttpMethod.GET)
       .coroutineHandler { getCouponStatus(it) }
+    router.route("/:owner_id/coupons/:coupon_id/check-availability")
+      .method(HttpMethod.POST)
+      .coroutineHandler {
+        internalAuthHandler.handle(it)
+        checkCouponAvailability(it)
+      }
     return router
   }
 
@@ -70,7 +80,6 @@ class WalletService @Inject constructor(
         routingContext.bodyAsString,
         IssueCouponRequestBody::class.java,
       )
-      // NOTE(pjongy): Only allows last parameter for same key
       IssueCouponRequest(
         ownerId = routingContext.pathParam("owner_id").toString(),
         couponId = routingContext.pathParam("coupon_id").toString(),
@@ -107,5 +116,22 @@ class WalletService @Inject constructor(
       throw InvalidParameter(e.message ?: "Parameters not satisfied")
     }
     return getCouponStatusHandler.handle(request = request)
+  }
+
+  private suspend fun checkCouponAvailability(routingContext: RoutingContext): String {
+    val request = try {
+      val requestBody = gson.fromJson(
+        routingContext.bodyAsString,
+        CheckCouponAvailabilityRequestBody::class.java,
+      )
+      CheckCouponAvailabilityRequest(
+        ownerId = routingContext.pathParam("owner_id").toString(),
+        couponId = routingContext.pathParam("coupon_id").toString(),
+        properties = requestBody.properties,
+      )
+    } catch (e: Exception) {
+      throw InvalidParameter(e.message ?: "Parameters not satisfied")
+    }
+    return checkCouponAvailabilityHandler.handle(request = request)
   }
 }
