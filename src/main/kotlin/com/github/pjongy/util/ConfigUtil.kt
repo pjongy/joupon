@@ -23,7 +23,7 @@ object ConfigUtil {
         FlatSource(
           // Convert environment variable like PARENT__CHILD_ELEMENT as parent.childElement
           System.getenv()
-            .filter { (key, _) -> !key.startsWith("__") }
+            .filter { (key, _) -> !key.startsWith("_") }
             .mapKeys { (key, _) ->
               val seperated = key.toLowerCase().replace("__", ".")
               CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, seperated)
