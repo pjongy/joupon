@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.github.pjongy"
-version = "0.3.1"
+version = "0.4.1"
 
 repositories {
   mavenCentral()
