@@ -9,6 +9,10 @@ import com.github.pjongy.exception.UnAvailableData
 import io.vertx.ext.web.RoutingContext
 
 object ResponseHandler {
+  private fun errorAsJson(errorMessage: String?): String {
+    return "{\"error\": \"${errorMessage?.replace("\"", "\\\"") ?: ""}\"}"
+  }
+
   suspend fun handle(routingContext: RoutingContext, fn: suspend () -> String) {
     val response = routingContext.response()
     response.isChunked = true
@@ -18,22 +22,22 @@ object ResponseHandler {
       fn()
     } catch (e: InvalidParameter) {
       response.statusCode = 400
-      e.message
+      errorAsJson(e.message)
     } catch (e: PermissionRequired) {
       response.statusCode = 403
-      e.message
+      errorAsJson(e.message)
     } catch (e: Duplicated) {
       response.statusCode = 409
-      e.message
+      errorAsJson(e.message)
     } catch (e: AuthorizationRequired) {
       response.statusCode = 401
-      e.message
+      errorAsJson(e.message)
     } catch (e: NotFound) {
       response.statusCode = 404
-      e.message
+      errorAsJson(e.message)
     } catch (e: UnAvailableData) {
       response.statusCode = 404
-      e.message
+      errorAsJson(e.message)
     }
     response.write(responseBody)
     response.end()
