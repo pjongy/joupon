@@ -47,7 +47,17 @@ val availableOperators = listOf(
         "description": "coupon description",
         "image_url": "https://image.coupon/url",
         "expired_at": "9999-01-01T00:00:00Z"
-        "condition": { // It is recursive
+        "issuing_condition": { // It is recursive
+          "conditions": [
+              {
+                "key": ...key string for validate with condition...,
+                "value": ...value string for validate with condition...,
+                "operator": ...operater string for validate with condition...
+              },
+          ],
+          "join_type": ...join type(AND/OR) string for validate with condition...
+        },
+        "using_condition": { // It is recursive
           "conditions": [
               {
                 "key": ...key string for validate with condition...,
@@ -78,7 +88,17 @@ val availableOperators = listOf(
         "expired_at": "9999-01-01T00:00:00Z",
         "description": "coupon description",
         "image_url": "https://image.coupon/url"
-        "condition": { // It is recursive
+        "issuing_condition": { // It is recursive
+          "conditions": [
+              {
+                "key": ...key string for validate with condition...,
+                "value": ...value string for validate with condition...,
+                "operator": ...operater string for validate with condition...
+              },
+          ],
+          "join_type": ...join type(AND/OR) string for validate with condition...
+        },
+        "using_condition": { // It is recursive
           "conditions": [
               {
                 "key": ...key string for validate with condition...,
@@ -120,7 +140,17 @@ val availableOperators = listOf(
             "expired_at": "9999-01-01T00:00:00Z",
             "description": "coupon description",
             "image_url": "https://image.coupon/url"
-            "condition": { // It is recursive
+            "issuing_condition": { // It is recursive
+              "conditions": [
+                  {
+                    "key": ...key string for validate with condition...,
+                    "value": ...value string for validate with condition...,
+                    "operator": ...operater string for validate with condition...
+                  },
+              ],
+              "join_type": ...join type(AND/OR) string for validate with condition...
+            },
+            "using_condition": { // It is recursive
               "conditions": [
                   {
                     "key": ...key string for validate with condition...,
@@ -166,7 +196,17 @@ val availableOperators = listOf(
               "expired_at": "9999-01-01T00:00:00Z",
               "description": "coupon description",
               "image_url": "https://image.coupon/url"
-              "condition": { // It is recursive
+              "issuing_condition": { // It is recursive
+                "conditions": [
+                    {
+                      "key": ...key string for validate with condition...,
+                      "value": ...value string for validate with condition...,
+                      "operator": ...operater string for validate with condition...
+                    },
+                ],
+                "join_type": ...join type(AND/OR) string for validate with condition...
+              },
+              "using_condition": { // It is recursive
                 "conditions": [
                     {
                       "key": ...key string for validate with condition...,

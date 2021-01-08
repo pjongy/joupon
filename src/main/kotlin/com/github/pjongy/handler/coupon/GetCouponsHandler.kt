@@ -38,7 +38,8 @@ class GetCouponsHandler @Inject constructor(
           expiredAt = coupon.createdAt.toISO8601(clock.zone),
           description = coupon.description,
           imageUrl = coupon.imageUrl,
-          condition = gson.fromJson(coupon.condition, Condition::class.java),
+          issuingCondition = gson.fromJson(coupon.issuingCondition, Condition::class.java),
+          usingCondition = gson.fromJson(coupon.usingCondition, Condition::class.java),
         )
       }
     )

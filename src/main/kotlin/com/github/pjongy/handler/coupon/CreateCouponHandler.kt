@@ -20,7 +20,7 @@ class CreateCouponHandler @Inject constructor(
 ) {
 
   suspend fun handle(request: CreateCouponRequest): String {
-    if (!request.condition.isValid()) {
+    if (!request.issuingCondition.isValid() || !request.usingCondition.isValid()) {
       throw InvalidParameter("wrong coupon condition structure")
     }
     val coupon = couponRepository.createCoupon(
@@ -32,7 +32,8 @@ class CreateCouponHandler @Inject constructor(
       expiredAt = ZonedDateTime.parse(request.expiredAt),
       description = request.description,
       imageUrl = request.imageUrl,
-      condition = gson.toJson(request.condition),
+      issuingCondition = gson.toJson(request.issuingCondition),
+      usingCondition = gson.toJson(request.usingCondition),
     ) ?: throw HandlerException("coupon row insertion failed")
 
     val response = CreateCouponResponse(
@@ -46,7 +47,8 @@ class CreateCouponHandler @Inject constructor(
       expiredAt = coupon.createdAt.toISO8601(clock.zone),
       description = coupon.description,
       imageUrl = coupon.imageUrl,
-      condition = gson.fromJson(coupon.condition, Condition::class.java),
+      issuingCondition = gson.fromJson(coupon.issuingCondition, Condition::class.java),
+      usingCondition = gson.fromJson(coupon.usingCondition, Condition::class.java),
     )
     return gson.toJson(response)
   }

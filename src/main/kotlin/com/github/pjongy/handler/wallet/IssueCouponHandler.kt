@@ -34,7 +34,7 @@ class IssueCouponHandler @Inject constructor(
 
     val couponId = UUID.fromString(request.couponId)
     val coupon = couponRepository.findById(couponId)
-    val condition = gson.fromJson(coupon.condition, Condition::class.java)
+    val condition = gson.fromJson(coupon.issuingCondition, Condition::class.java)
 
     if (!condition.isAvailable(request.properties)) {
       throw UnAvailableData("condition for coupon is not satisfied")
