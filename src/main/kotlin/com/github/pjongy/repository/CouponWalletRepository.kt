@@ -102,15 +102,16 @@ class CouponWalletRepository @Inject constructor(
   suspend fun findByOwnerIdAndCouponId(
     ownerId: String,
     couponId: UUID,
-  ): CouponWalletRow? {
-    return newSuspendedTransaction(db = db) {
-      addLogger(Slf4jSqlDebugLogger)
-      val resultRow = CouponWallet.select {
-        CouponWallet.couponId eq couponId and
-          (CouponWallet.ownerId eq ownerId)
-      }.firstOrNull()
-      resultRow?.let { wrapCouponWalletRow(it) }
-    }
+  ): CouponWalletRow {
+    return wrapCouponWalletRow(
+      newSuspendedTransaction(db = db) {
+        addLogger(Slf4jSqlDebugLogger)
+        CouponWallet.select {
+          CouponWallet.couponId eq couponId and
+            (CouponWallet.ownerId eq ownerId)
+        }.first()
+      }
+    )
   }
 
   suspend fun updateCouponWalletStatus(

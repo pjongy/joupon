@@ -15,9 +15,14 @@ class GetCouponStatusHandler @Inject constructor(
 ) {
 
   suspend fun handle(request: GetCouponStatusRequest): String {
-    val couponWallet = couponWalletRepository.findByOwnerIdAndCouponId(
-      ownerId = request.ownerId, couponId = UUID.fromString(request.couponId)
-    ) ?: throw NotFound("there are no coupon ${request.couponId} for ${request.ownerId}")
+    val couponWallet = try {
+      couponWalletRepository.findByOwnerIdAndCouponId(
+        ownerId = request.ownerId,
+        couponId = UUID.fromString(request.couponId),
+      )
+    } catch (e: NoSuchElementException) {
+      throw NotFound("there is no coupon ${request.couponId} for ${request.ownerId}")
+    }
 
     val response = GetCouponStatusResponse(
       ownerId = couponWallet.ownerId,

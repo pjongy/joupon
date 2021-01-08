@@ -27,7 +27,11 @@ class CheckCouponAvailabilityHandler @Inject constructor(
 
   suspend fun handle(request: CheckCouponAvailabilityRequest): String {
     val couponId = UUID.fromString(request.couponId)
-    val coupon = couponRepository.findById(couponId)
+    val coupon = try {
+      couponRepository.findById(couponId)
+    } catch (e: NoSuchElementException) {
+      throw throw NotFound("invalid coupon")
+    }
     val condition = gson.fromJson(coupon.usingCondition, Condition::class.java)
 
     if (coupon.status == CouponStatus.DELETED) {
@@ -37,11 +41,14 @@ class CheckCouponAvailabilityHandler @Inject constructor(
     if (!condition.isAvailable(request.properties)) {
       throw UnAvailableData("condition for coupon is not satisfied")
     }
-
-    val couponWallet = couponWalletRepository.findByOwnerIdAndCouponId(
-      couponId = couponId,
-      ownerId = request.ownerId,
-    ) ?: throw NotFound("coupon not found in wallet")
+    val couponWallet = try {
+      couponWalletRepository.findByOwnerIdAndCouponId(
+        couponId = couponId,
+        ownerId = request.ownerId,
+      )
+    } catch (e: NoSuchElementException) {
+      throw NotFound("coupon not found in wallet")
+    }
 
     if (couponWallet.status != CouponWalletStatus.UNUSED) {
       throw HandlerException("coupon status is not UNUSED")

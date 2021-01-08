@@ -27,12 +27,21 @@ class ChangeCouponStatusHandler @Inject constructor(
       throw InvalidParameter("invalid status: ${request.status}")
     }
 
-    val couponWallet = couponWalletRepository.findByOwnerIdAndCouponId(
-      ownerId = request.ownerId, couponId = UUID.fromString(request.couponId)
-    ) ?: throw NotFound("there are no coupon ${request.couponId} for ${request.ownerId}")
+    val couponWallet = try {
+      couponWalletRepository.findByOwnerIdAndCouponId(
+        ownerId = request.ownerId,
+        couponId = UUID.fromString(request.couponId),
+      )
+    } catch (e: NoSuchElementException) {
+      throw NotFound("there is no coupon ${request.couponId} for ${request.ownerId}")
+    }
 
     val currentTime = Instant.now(clock)
-    val coupon = couponRepository.findById(UUID.fromString(request.couponId))
+    val coupon = try {
+      couponRepository.findById(UUID.fromString(request.couponId))
+    } catch (e: NoSuchElementException) {
+      throw throw NotFound("invalid coupon")
+    }
     if (coupon.expiredAt.isBefore(currentTime)) {
       throw UnAvailableData("coupon expiation over")
     }

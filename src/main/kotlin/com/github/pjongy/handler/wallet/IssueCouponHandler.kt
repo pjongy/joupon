@@ -2,6 +2,7 @@ package com.github.pjongy.handler.wallet
 
 import com.github.pjongy.exception.Duplicated
 import com.github.pjongy.exception.HandlerException
+import com.github.pjongy.exception.NotFound
 import com.github.pjongy.exception.UnAvailableData
 import com.github.pjongy.extension.toISO8601
 import com.github.pjongy.handler.wallet.extension.isAvailable
@@ -34,7 +35,11 @@ class IssueCouponHandler @Inject constructor(
     }
 
     val couponId = UUID.fromString(request.couponId)
-    val coupon = couponRepository.findById(couponId)
+    val coupon = try {
+      couponRepository.findById(couponId)
+    } catch (e: NoSuchElementException) {
+      throw throw NotFound("invalid coupon")
+    }
     val condition = gson.fromJson(coupon.issuingCondition, Condition::class.java)
 
     if (coupon.status == CouponStatus.DELETED) {
