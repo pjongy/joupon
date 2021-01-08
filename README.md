@@ -16,7 +16,7 @@
 ---
 
 ## API specification
-[API specification document](./API.README.md)
+[API specification document](docs/API.README.md)
 
 
 ## Quick start (on local)
@@ -60,4 +60,14 @@ $ docker run \
  -e JOUPON__INTERNAL_API_KEYS={..comma separated internal access keys..} \
  -p 80:8080\
  pjongy/joupon
+```
+
+## Run
+```
+$ APP_CONFIG=local \
+ JOUPON__MYSQL__JDBC_URL={..mysql connection jdbc url..} \
+ JOUPON__MYSQL__USER={..mysql user..} \
+ JOUPON__MYSQL__PASSWORD={..mysql password..} \
+ JOUPON__INTERNAL_API_KEYS={..comma separated internal access keys..} \
+ ./gradlew :run -Dorg.gradle.java.home={...JDK 12 HOME...}
 ```
